@@ -9,27 +9,27 @@ import re
 
 class RecipeFetcher:
 
-    
+
     search_base_url = 'https://www.allrecipes.com/search/results/?wt=%s&sort=re'
-    
-    
-    def search_recipes(self, keyword): 
+
+
+    def search_recipes(self, keyword):
         search_url = self.search_base_url %('+'.join(keyword.split()))
 
         page_html = requests.get(search_url)
-        page_graph = BeautifulSoup(page_html.content)
+        page_graph = BeautifulSoup(page_html.content, features="lxml")
 
         return [recipe.a['href'] for recipe in\
                page_graph.find_all('div', {'class':'grid-card-image-container'})]
-    
-    
+
+
     def fetch_nutrition_facts(self, recipe_url):
         results = []
 
         nutrition_facts_url = '%s/fullrecipenutrition' %(recipe_url)
 
         page_html = requests.get(nutrition_facts_url)
-        page_graph = BeautifulSoup(page_html.content)
+        page_graph = BeautifulSoup(page_html.content, features="lxml")
 
         r = re.compile("([0-9]*\.?[0-9]*)([a-zA-Z]+)")
 
@@ -45,13 +45,16 @@ class RecipeFetcher:
             results.append(nutrient)
 
         return results
-    
-    
+
+
     def fetch_recipe(self, recipe_url):
+        print(recipe_url)
         results = {}
 
         page_html = requests.get(recipe_url)
-        page_graph = BeautifulSoup(page_html.content)
+        page_graph = BeautifulSoup(page_html.content, features="lxml")
+
+        results['name'] = page_graph.find("h1", {"id": "recipe-main-content", "itemprop": "name"}).text
 
         results['ingredients'] = [ingredient.text for ingredient in\
                                   page_graph.find_all('span', {'itemprop':'recipeIngredient'})]
@@ -63,7 +66,7 @@ class RecipeFetcher:
         results['nutrition'] = self.fetch_nutrition_facts(recipe_url)
 
         return results
-    
+
     def parse(self):
         # TO-DO
         pass
