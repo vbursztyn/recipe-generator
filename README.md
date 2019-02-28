@@ -1,7 +1,7 @@
 # recipe-generator
 Project 2 for Northwestern's EECS 337.
 
-1. pip install requirements.txt
+1. pip install -r requirements.txt
 
 If you want to regenerate contents in folder 'ingredient_data':
 
