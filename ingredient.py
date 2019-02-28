@@ -28,7 +28,6 @@ class Ingredient(object):
         # TODO: move to Guru for pre-compiling
         rgx = "(?:"+"|".join(PREPSTEPS)+")"
         prepCheck = re.findall(rgx, workingStatement)
-        if self.statement == "3 (28 ounce) cans whole peeled tomatoes, crushed": breakpoint()
         if prepCheck:
             # we're dealing with one-to-many here...
             for prepStep in prepCheck:
