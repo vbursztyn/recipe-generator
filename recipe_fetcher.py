@@ -47,7 +47,7 @@ class RecipeFetcher:
         return results
 
 
-    def fetch_recipe(self, recipe_url):
+    def fetch_recipe(self, recipe_url, include_nutrients=True):
         print(recipe_url)
         results = {}
 
@@ -63,7 +63,8 @@ class RecipeFetcher:
                                  page_graph.find_all('span', {'class':'recipe-directions__list--item'})
                                  if direction.text.strip()]
 
-        results['nutrition'] = self.fetch_nutrition_facts(recipe_url)
+        if include_nutrients: # Made optional to avoid unnecessary requests
+            results['nutrition'] = self.fetch_nutrition_facts(recipe_url)
 
         return results
 
