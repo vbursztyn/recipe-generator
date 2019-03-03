@@ -1,4 +1,5 @@
 from ingredient import Ingredient
+import RecipeStep
 from guru import Guru
 
 class Recipe(object):
@@ -6,7 +7,7 @@ class Recipe(object):
         self.rawRecipe = rawRecipe
         self.guru = Guru()
         self.parse_ingredients()
-        self.parse_steps()
+        self.steps = RecipeStep.directions_to_recipe_steps(rawRecipe['directions'], self.ingredients)
         self.parse_nutrition_information()
 
     def parse_ingredients(self):
@@ -27,7 +28,8 @@ class Recipe(object):
         print(self.rawRecipe["name"].upper())
         print("\n[INGREDIENTS]")
         self.print_ingredients()
-        # self.print_steps()
+        print('\n[STEPS]')
+        RecipeStep.print_steps(self.steps)
         # self.print_nutrition_info()
         print("============\n\n")
 
