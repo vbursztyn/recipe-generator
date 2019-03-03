@@ -10,9 +10,9 @@ class InteractionManager(object):
 
     # dev-time helper
     def run_recipes(self, searchTerm="mexican", displayCount=5):
-        results = im.fetcher.search_recipes(searchTerm)
+        results = self.fetcher.search_recipes(searchTerm)
         for i in range(0, displayCount):
-            rawRecipe = im.fetcher.fetch_recipe(results[i])
+            rawRecipe = self.fetcher.fetch_recipe(results[i])
             recipe = Recipe(rawRecipe)
             recipe.print()
 
