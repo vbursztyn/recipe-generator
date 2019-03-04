@@ -27,3 +27,6 @@ class Guru(object):
             return suspicious_hay["category"].values[0]
         else:
             return None
+
+    def transformCuisine(self, recipe, toCuisine):
+        pass

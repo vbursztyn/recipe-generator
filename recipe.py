@@ -7,6 +7,7 @@ class Recipe(object):
         self.rawRecipe = rawRecipe
         self.guru = Guru()
         self.parse_ingredients()
+        self.assign_ingredient_roles()
         self.steps = RecipeStep.directions_to_recipe_steps(rawRecipe['directions'], self.ingredients)
         self.parse_nutrition_information()
 
@@ -15,6 +16,11 @@ class Recipe(object):
         rawIngs = self.rawRecipe["ingredients"]
         for ing in rawIngs:
             self.ingredients.append(Ingredient(ing, self.guru))
+
+    def assign_ingredient_roles(self):
+        # go through and assign ingredient.role on each ingredient
+        # includes: protein, vegetables, spices, garnish...?
+        pass
 
     def parse_steps(self):
         pass

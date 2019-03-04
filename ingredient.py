@@ -29,15 +29,25 @@ class Ingredient(object):
         rgx = "(?:"+"|".join(PREPSTEPS)+")"
         prepCheck = re.findall(rgx, workingStatement)
         if prepCheck:
-            # we're dealing with one-to-many here...
-            for prepStep in prepCheck:
-                workingStatement = workingStatement.replace(prepStep, "").replace("  ", " ").strip()
+            # we"re dealing with one-to-many here...
+            for i, prepStep in enumerate(prepCheck):
+                workingStatement = workingStatement.replace(prepStep, "")
+            if len(prepCheck) > 1 and i == len(prepCheck)-1:
+                # check for orphaned ands/ors
+                # cheating a bit by looking for double spaces...if this works, it avoid
+                # regex permutations...
+                hunter = "  (?:and|or) ?"
+                matched = re.search(hunter, workingStatement)
+                if matched:
+                    workingStatement = re.sub(hunter, "", workingStatement)
+            else:
+                workingStatement = workingStatement.replace("  ", " ").strip()
                 self.prepSteps.append(prepStep.strip())
 
         # ROLE ASSESSMENT
         # TODO: make this smarter and derive role like "protein" or "starch"
         # FOR NOW: just look for "garnish with" or "for garnish"
-        garnishCheck = re.search('(?:for)? ?(?:garnish) ?(?:with)?', workingStatement)
+        garnishCheck = re.search("(?:for)? ?(?:garnish) ?(?:with)?", workingStatement)
         if garnishCheck:
             workingStatement = workingStatement.replace(garnishCheck.group(), "").replace("  ", " ").strip()
             self.role = "garnish"
@@ -53,7 +63,7 @@ class Ingredient(object):
             workingStatement = workingStatement[2:].strip()
 
         # IS THERE A QUANTITY MODIFIER?
-        modifierCheck = re.search('(?:or)? ?(?:to taste)', workingStatement)
+        modifierCheck = re.search("(?:or)? ?(?:to taste)", workingStatement)
         if modifierCheck:
             self.quantity_modifier = modifierCheck.group().strip()
             workingStatement = workingStatement.replace(modifierCheck.group(), "").replace("  ", " ").strip()
@@ -80,7 +90,7 @@ class Ingredient(object):
                     workingStatement = workingStatment[3:]
 
         # GET THE BASE TYPE
-        # ask the guru for help, so we're not constantly loading external data per ingredient
+        # ask the guru for help, so we"re not constantly loading external data per ingredient
         # by now our workingStatement *should* just be the ingredient itself
         self.baseType = self.guru.get_ingredient_base_type(workingStatement)
 
