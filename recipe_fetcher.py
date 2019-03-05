@@ -48,7 +48,7 @@ class RecipeFetcher:
 
 
     def fetch_recipe(self, recipe_url, include_nutrients=True):
-        print(recipe_url)
+        # print(recipe_url)
         results = {}
 
         page_html = requests.get(recipe_url)

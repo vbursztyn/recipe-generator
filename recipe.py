@@ -5,6 +5,7 @@ from guru import Guru
 class Recipe(object):
     def __init__(self, rawRecipe):
         self.rawRecipe = rawRecipe
+        self.name = rawRecipe["name"]
         self.guru = Guru()
         self.parse_ingredients()
         self.assign_ingredient_roles()
