@@ -10,6 +10,7 @@ class InteractionManager(object):
             ("Make it healthier", self.makeHealthier),
             ("Make it less healthy (but why?)", self.makeLessHealthy),
             ("Switch it to a different cuisine", self.cuisineSwitcherOptions),
+            ("Mix it up! (aka: make a reviewer-suggested alteration)", self.mixItUp),
             ("Nevermind, let's start over with a different recipe.", self.recipePrompt)
         ]
         # and a list of our supported cuisines...edit at will!
@@ -76,7 +77,7 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things vegetarian.\n\n")
         print("Here it is again, now with less meat:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        self.recipe.print()
+        print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -84,7 +85,7 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things NOT vegetarian.\n\n")
         print("Well, okay. Here you go:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        self.recipe.print()
+        print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -92,7 +93,7 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things healthier.\n\n")
         print("Behold, a healthier take on this recipe:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        self.recipe.print()
+        print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -100,7 +101,7 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things LESS healthy.\n\n")
         print("You want it to be worse for you? Weird, but okay...try this:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        self.recipe.print()
+        print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -130,10 +131,17 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things in other cuisines like "+cuisine.upper()+".\n\n")
         print("Aha, I like " + cuisine.capitalize() + " food, too. Try this:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        self.recipe.print()
+        print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
+    def mixItUp(self):
+        print("\n\nTODO: Teach the Guru to take suggestions from reviewers and alter the given recipe.")
+        print("Someone on allrecipes.com suggested that this is another take worth trying:")
+        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        print(self.recipe)
+        print("\n\n")
+        self.presentRecipeOptions(returned=True)
 
     # dev-time helper
     def run_recipes(self, searchTerm="mexican", displayCount=5):

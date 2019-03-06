@@ -9,14 +9,28 @@ class Recipe(object):
         self.guru = Guru()
         self.parse_ingredients()
         self.assign_ingredient_roles()
-        self.steps = RecipeStep.directions_to_recipe_steps(rawRecipe['directions'], self.ingredients)
+        self.steps = RecipeStep.directions_to_recipe_steps(rawRecipe['directions'], self.allIngredients)
         self.parse_nutrition_information()
 
     def parse_ingredients(self):
-        self.ingredients = []
+        self.allIngredients = []
+        self.subcomponents = []
+        self.ingredientsBySubcomponent = {}
+        activeSubcomponent = None
         rawIngs = self.rawRecipe["ingredients"]
         for ing in rawIngs:
-            self.ingredients.append(Ingredient(ing, self.guru))
+            ping = Ingredient(ing, self.guru)
+            # is this a subcomponent delimiter?
+            if ing.find(":") > -1 and not any([ping.quantity, ping.quantityModifier, ping.unit, ping.prepSteps]):
+                # it's probably a subcomponent like "Seasoning Mix:"
+                cleanSubc = ing.replace(":", "")
+                self.subcomponents.append(cleanSubc)
+                activeSubcomponent = cleanSubc
+                self.ingredientsBySubcomponent[cleanSubc] = []
+            elif activeSubcomponent:
+                self.ingredientsBySubcomponent[activeSubcomponent].append(ping)
+            # always make the master list, too
+            self.allIngredients.append(ping)
 
     def assign_ingredient_roles(self):
         # go through and assign ingredient.role on each ingredient
@@ -30,7 +44,9 @@ class Recipe(object):
         pass
 
     # DEV HELPERS
-    def print(self):
+    def __str__(self):
+        # this is certainly hacky, but it seemed easier/faster to just nest prints
+        # (given the subcomponents) than build a payload to return
         print("\n\n============")
         print(self.rawRecipe["name"].upper())
         print("\n[INGREDIENTS]")
@@ -39,8 +55,17 @@ class Recipe(object):
         RecipeStep.print_steps(self.steps)
         # self.print_nutrition_info()
         print("============\n\n")
+        return "LOOKS DELICIOUS!"
 
     def print_ingredients(self):
-        # dev helper
-        for ing in self.ingredients:
-            ing.express_components()
+        # are there subcomponents to worry about?
+        if not self.subcomponents:
+            for ing in self.allIngredients:
+                print(ing)
+        else:
+            # print by subcomponent
+            for subc in self.subcomponents:
+                print(subc.upper() + ":")
+                for ing in self.ingredientsBySubcomponent[subc]:
+                    print(ing)
+                print("----------")

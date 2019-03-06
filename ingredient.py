@@ -1,3 +1,4 @@
+from copy import copy, deepcopy
 import re
 
 from guru import Guru
@@ -11,11 +12,55 @@ class Ingredient(object):
         self.name = None
         self.baseType = None
         self.quantity = None
-        self.quantity_modifier = None
+        self.quantityModifier = None
+        self.convertibleQuantity = False
         self.unit = None
         self.prepSteps = []
         self.role = None
         self.parse()
+
+    def __repr__(self):
+        output = "-----"
+        output += "\nSTATEMENT: " + self.statement
+        output += "\nNAME: " + str(self.name)
+        output += "\nBASETYPE: " + str(self.baseType)
+        output += "\nQUANTITY: " + str(self.quantity)
+        output += "\nQUANTITY MODIFIER: " + str(self.quantityModifier)
+        output += "\nUNIT: " + str(self.unit)
+        output += "\nPREP STEPS: " + str(self.prepSteps)
+        output += "\nROLE: " + str(self.role)
+        return output
+
+    def __str__(self):
+        # SORTA NLG IT UP!
+        output = ""
+        if self.quantity: output += str(self.quantity)
+        if self.unit: output += " " + self.unit
+        prepSteps = copy(self.prepSteps)
+        if "ground" in prepSteps:
+            output += " ground"
+            prepSteps.remove("ground")
+        if self.name: output += " " + self.name
+        if prepSteps and len(prepSteps) == 1:
+            output += ", " + prepSteps[0]
+        elif prepSteps and len(prepSteps) > 1:
+            for i, step in enumerate(prepSteps):
+                if (i + 1) == len(prepSteps):
+                    output += " and "
+                output += " " + step
+        if self.quantityModifier:
+            output += " (" + self.quantityModifier + ")"
+        return output
+
+    def __mul__(self, x):
+        if not isinstance(x, (int, float)):
+            raise Exception("Multiplying by a non-number when changing an ingredient amount? That's not how you do math!")
+        newIngredient = deepcopy(self)
+        if isinstance(x, (int, float)) and self.convertibleQuantity:
+            newIngredient.quantity = self.quantity * x
+        return newIngredient
+
+    __rmul__ = __mul__
 
     def parse(self):
         workingStatement = self.statement
@@ -62,10 +107,41 @@ class Ingredient(object):
             self.quantity = "1"
             workingStatement = workingStatement[2:].strip()
 
+        # now make quantity a proper number/decimal
+        try:
+            self.quantity = float(self.quantity)
+            self.convertibleQuantity = True
+        except:
+            self.convertibleQuantity = False
+
+        if not self.convertibleQuantity:
+            # keep trying!
+            try:
+                if len(self.quantity.split("/")) > 1:
+                    # it's a fraction...split it apart
+                    # first...is there a whole number, too?
+                    spaceChunks = self.quantity.split(" ")
+                    if len(spaceChunks) == 1:
+                        # just a fraction
+                        fractChunks = self.quantity.split("/")
+                        self.quantity = int(fractChunks[0]) / int(fractChunks[1])
+                        self.convertibleQuantity = True
+                    elif len(spaceChunks) == 2:
+                        firstPart = int(spaceChunks[0])
+                        fractChunks = self.quantity.split("/")
+                        secondPart = int(fractChunks[0]) / int(fractChunks[1])
+                        self.quantity = firstPart + secondPart
+                        self.convertibleQuantity = True
+            except:
+                # we still have a quantity
+                # but we can't change it downstream
+                pass
+
         # IS THERE A QUANTITY MODIFIER?
-        modifierCheck = re.search("(?:or)? ?(?:to taste)", workingStatement)
+        modifierSnippets = ["or to taste","to taste","or more to taste","or more","or as needed to taste","as needed to taste","or as needed","as needed"]
+        modifierCheck = re.search("(?:"+"|".join(modifierSnippets)+")", workingStatement)
         if modifierCheck:
-            self.quantity_modifier = modifierCheck.group().strip()
+            self.quantityModifier = modifierCheck.group().strip()
             workingStatement = workingStatement.replace(modifierCheck.group(), "").replace("  ", " ").strip()
 
         # GET THE UNIT
@@ -82,7 +158,7 @@ class Ingredient(object):
         if not self.unit:
             # look for leading parentheses/patterns like "(4 ounce)"
             # TODO: maybe build this out to be more flexible (and move to Guru for precompiling)
-            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)? \w*\) ?(?:can|bottle|jar|package)?s?", workingStatement)
+            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)? \w*\) ?(?:can|bottle|jar|package|square)?s?", workingStatement)
             if specialUnit and specialUnit.group():
                 self.unit = specialUnit.group().replace("(","").replace(")","").strip()
                 workingStatement = workingStatement[len(specialUnit.group()):].strip()
@@ -96,14 +172,3 @@ class Ingredient(object):
 
         # and save the name...
         self.name = workingStatement
-
-    def express_components(self):
-        # debugging helper
-        print("-----")
-        print("STATEMENT: " + self.statement)
-        print("NAME: " + str(self.name))
-        print("BASETYPE: " + str(self.baseType))
-        print("QUANTITY: " + str(self.quantity))
-        print("UNIT: " + str(self.unit))
-        print("PREP STEPS: " + str(self.prepSteps))
-        print("ROLE: " + str(self.role))
