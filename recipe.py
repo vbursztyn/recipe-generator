@@ -21,9 +21,9 @@ class Recipe(object):
         for ing in rawIngs:
             ping = Ingredient(ing, self.guru)
             # is this a subcomponent delimiter?
-            if ing.find(":") > -1 and not any([ping.quantity, ping.quantityModifier, ping.unit, ping.prepSteps]):
+            if ing.strip()[-1:] == ":" and not any([ping.quantity, ping.quantityModifier, ping.unit, ping.prepSteps]):
                 # it's probably a subcomponent like "Seasoning Mix:"
-                cleanSubc = ing.replace(":", "")
+                cleanSubc = ing.strip()[:-1]
                 self.subcomponents.append(cleanSubc)
                 activeSubcomponent = cleanSubc
                 self.ingredientsBySubcomponent[cleanSubc] = []
