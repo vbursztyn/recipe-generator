@@ -42,6 +42,11 @@ class RecipeFetcher:
 
             tokens = nutrient_row.find('span',{'class':'nutrient-name'}).text.split(':')
             nutrient['name'] = tokens[0]
+            
+            # some nutrient information starts with an inequality that we clean up 
+            if tokens[1][:3] == ' < ':
+                tokens[1] = tokens[1][2:]
+                
             (nutrient['amount'], nutrient['unit']) = r.match(tokens[1].strip()).groups()
             nutrient['daily_value'] = nutrient_row.find('span',{'class':'daily-value'})
             if nutrient['daily_value']:
