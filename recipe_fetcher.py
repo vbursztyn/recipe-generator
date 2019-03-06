@@ -1,10 +1,14 @@
 from bs4 import BeautifulSoup
 
+from get_cuisine_characteristics import random_sleep
+
+from config import get_config
 
 import requests
 
-
 import re
+
+config = get_config()
 
 
 class RecipeFetcher:
@@ -13,14 +17,14 @@ class RecipeFetcher:
     search_base_url = 'https://www.allrecipes.com/search/results/?wt=%s&sort=re'
 
 
-    def search_recipes(self, keyword):
+    def search_recipes(self, keyword, max_amount = 100):
         search_url = self.search_base_url %('+'.join(keyword.split()))
 
         page_html = requests.get(search_url)
         page_graph = BeautifulSoup(page_html.content, features="lxml")
 
         return [recipe.a['href'] for recipe in\
-               page_graph.find_all('div', {'class':'grid-card-image-container'})]
+               page_graph.find_all('div', {'class':'grid-card-image-container'})][:max_amount]
 
 
     def fetch_nutrition_facts(self, recipe_url):
@@ -67,6 +71,32 @@ class RecipeFetcher:
             results['nutrition'] = self.fetch_nutrition_facts(recipe_url)
 
         return results
+    
+    # fetches the first max_amount reviews of a given allrecipe, returning them as a list of strings
+    def fetch_reviews(self, recipe_url : str, max_amount = 1000):
+    
+        # we first request the page of the recipe 
+        page_html = requests.get(recipe_url)
+        page_graph = BeautifulSoup(page_html.content, features="lxml")
+    
+        # we then check if there are any reviews
+        result = []
+        next_review_element = page_graph.find("a", class_="review-detail__link")
+    
+        review_counter = 0
+        while next_review_element:
+            review_html = requests.get(next_review_element['href'])
+            review_graph = BeautifulSoup(review_html.content, features="lxml")
+            result.append(review_graph.find_all("meta")[4]['content'])
+            next_review_element = review_graph.find("link", attrs={'rel': 'next' })
+            random_sleep(config['SAFE_REQUEST_INTERVAL'])
+        
+            # if we crossed the maximal amount of reviews, we break the loop
+            review_counter = review_counter + 1
+            if review_counter >= max_amount:
+                break
+            
+        return result
 
     def parse(self):
         # TO-DO
