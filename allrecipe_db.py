@@ -24,6 +24,9 @@ class AllRecipe:
         self.parsed_recipe = Recipe(rf.fetch_recipe(url))
         self.reviews = rf.fetch_reviews(url, max_amount = max_reviews)
         
+    def __eq__(self, other):
+        return self.url == other.url
+        
 def load_allrecipe_database():
     return pickle.load(open('allrecipe_db.pickle', 'rb'))
 
