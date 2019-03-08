@@ -27,7 +27,7 @@ cooking_verbs = {'add', 'adjust', 'arrange', 'bake', 'baste', 'beat', 'blend',
 # Possible conflicts; let's leave these out for now and parse via context clues later
 #cooking_verbs = ['try', 'taste', 'sugar', 'spice', 'skim', 'salt', 'batter', 'spoon']
 
-def parse_cooking_action(direction_tokens):
+def parse_cooking_action(direction_tokens, parsed_steps):
     # Take the first word that could be a valid step
     # TODO: Right now we'll miss compounds like "roll out"; needs fixing
     for i in range(len(direction_tokens)):
@@ -35,20 +35,47 @@ def parse_cooking_action(direction_tokens):
             return direction_tokens[i], (i, i+1)
     return None, (-1, -1)
 
-def parse_step_ingredients(direction_tokens, ingredients):
+def intervals_overlap(interval1, interval2):
+    """Assumes each interval is already sorted. This function also assumes
+    half-open intervals, so if interval1[1] == interval2[0] that does NOT count
+    as overlapping."""
+    if interval1[0] <= interval2[0]:
+        return interval2[0] < interval1[1]
+    return interval1[0] < interval2[1]
+
+def disambiguate_overlapping_ingredients(direction_tokens, ingr_extras):
+    # TODO: Nesting is not deep enough here. Needs more levels of indentation
+    for i, ingr1 in enumerate(ingr_extras):
+        for j, ingr2 in enumerate(ingr_extras[(i+1):]):
+            for interval1 in ingr1['positions']:
+                for interval2 in ingr2['positions']:
+                    if intervals_overlap(interval1, interval2):
+                        intervalsize1 = interval1[1] - interval1[0]
+                        intervalsize2 = interval2[1] - interval2[0]
+                        if intervalsize1 < intervalsize2:
+                            ingr1['positions'].remove(interval1)
+                        elif intervalsize2 < intervalsize1:
+                            ingr2['positions'].remove(interval2)
+                        else:
+                            # TODO: Check for a size keyword in front of the
+                            # ingredient and choose intelligently. Currently we
+                            # just default to removing ingr2
+                            ingr2['positions'].remove(interval2)
+
+def parse_step_ingredients(direction_tokens, parsed_steps, ingredients):
     ingr_extras = []
     for ingr in ingredients:
         namelist = ingr.name.lower().split(' ')
-        if 'and' in namelist:
-            namelist.remove('and') # Ugly hack
         ingr_extras.append({
             'ingredient': ingr,
+            'positions': [],
             'namelist': tuple(namelist),
             'nameset': set(namelist)
         })
 
+    all_ingr_positions = []
+
     for ingr in ingr_extras:
-        positions = []
         start = -1
         namelist_start = -1
         for i in range(len(direction_tokens)):
@@ -56,7 +83,7 @@ def parse_step_ingredients(direction_tokens, ingredients):
             if namelist_start >= 0:
                 namelist_offset = namelist_start + i - start
                 if namelist_offset >= len(ingr['namelist']) or token != ingr['namelist'][namelist_offset]:
-                    positions.append((start, i))
+                    ingr['positions'].append((start, i))
                     start = -1
                     namelist_start = -1
             elif token in ingr['namelist']:
@@ -64,23 +91,30 @@ def parse_step_ingredients(direction_tokens, ingredients):
                 start = i
 
         if start >= 0:
-            positions.append((start, len(direction_tokens)))
-
-        ingr['positions'] = positions
+            ingr['positions'].append((start, len(direction_tokens)))
 
         # Delete no longer needed fields
         del ingr['namelist']
         del ingr['nameset']
 
+
+    disambiguate_overlapping_ingredients(direction_tokens, ingr_extras)
+
     return ingr_extras
 
 
-def direction_to_recipe_step(direction, ingredients):
+def direction_to_recipe_step(direction, parsed_steps, ingredients):
+    # The reason for requiring a list of already-parsed steps is that some
+    # steps reference the results of previous steps. For example, "Mix eggs and
+    # cream. Pour mixture into bowl"; here the word "mixture" in the second
+    # sentence only makes sense in the context of the mixing step in the first
+    # sentence.
+
     tokens = nltk.word_tokenize(direction.lower())
     step = RecipeStep()
     step.raw_step = direction
-    step.action, step.action_position = parse_cooking_action(tokens)
-    step.ingredients = parse_step_ingredients(tokens, ingredients)
+    step.action, step.action_position = parse_cooking_action(tokens, parsed_steps)
+    step.ingredients = parse_step_ingredients(tokens, parsed_steps, ingredients)
     return step
 
 def split_steps(directions):
@@ -94,7 +128,11 @@ def split_steps(directions):
     return nltk.sent_tokenize(directions)
 
 def directions_to_recipe_steps(directions, ingredients):
-    return [direction_to_recipe_step(d, ingredients) for d in split_steps(directions)]
+    steps_list = split_steps(directions)
+    parsed_steps = []
+    for step in steps_list:
+        parsed_steps.append(direction_to_recipe_step(step, parsed_steps, ingredients))
+    return parsed_steps
 
 def print_steps(steps):
     i = 1
