@@ -149,7 +149,7 @@ class InteractionManager(object):
         for i in range(0, displayCount):
             rawRecipe = self.fetcher.fetch_recipe(results[i])
             recipe = Recipe(rawRecipe)
-            recipe.print()
+            print(recipe)
 
 
 if __name__ == "__main__":

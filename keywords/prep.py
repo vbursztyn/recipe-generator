@@ -19,5 +19,7 @@ PREPSTEPS = [
     "crushed",
     "cooked",
     "rinsed",
-    "grated"
+    "grated",
+    "peeled",
+    "pitted"
 ]

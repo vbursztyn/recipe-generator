@@ -138,7 +138,7 @@ class Ingredient(object):
                 pass
 
         # IS THERE A QUANTITY MODIFIER?
-        modifierSnippets = ["or to taste","to taste","or more to taste","or more","or as needed to taste","as needed to taste","or as needed","as needed"]
+        modifierSnippets = ["or to taste","or more to taste","or more as needed to taste","or as needed to taste","as needed to taste","to taste","or more as needed","or more","or as needed","as needed"]
         modifierCheck = re.search("(?:"+"|".join(modifierSnippets)+")", workingStatement)
         if modifierCheck:
             self.quantityModifier = modifierCheck.group().strip()
@@ -155,10 +155,11 @@ class Ingredient(object):
                 # TODO: explore handling periods in abbreviations -- possibly with regex?
                 self.unit = term
                 workingStatement = workingStatement.replace(term, "", 1).strip()
+
         if not self.unit:
             # look for leading parentheses/patterns like "(4 ounce)"
             # TODO: maybe build this out to be more flexible (and move to Guru for precompiling)
-            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)? \w*\) ?(?:can|bottle|jar|package|square)?s?", workingStatement)
+            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)?[\s\S]*\) ?(?:can|bottle|jar|package|square|jigger)?s?", workingStatement)
             if specialUnit and specialUnit.group():
                 self.unit = specialUnit.group().replace("(","").replace(")","").strip()
                 workingStatement = workingStatement[len(specialUnit.group()):].strip()
