@@ -13,8 +13,12 @@
 
 import os
 import pickle
+import json
 from recipe import Recipe 
 from recipe_fetcher import RecipeFetcher
+from config import get_config
+
+config = get_config()
 
 # a generic class containing a given recipe from allrecipes.com
 # saves the url, an instance of Recipe(), as well as a list of reviews
@@ -31,15 +35,16 @@ class AllRecipe:
 
 # loads the list of recipes from allrecipes.com from a pickle file 
 def load_allrecipe_database():
-    return pickle.load(open('allrecipe_db.pickle', 'rb'))
+    return pickle.load(open(os.path.join(config['ALLRECIPE_DATA'], config['ALLRECIPE_DB']),'rb'))
 
 # save the list of recipes from allrecipes.com into a pickle file 
 def save_allrecipe_database(ardb):
-    with open('allrecipe_db.pickle', 'wb') as handle:
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['ALLRECIPE_DB']),'wb') as handle:
         pickle.dump(ardb, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # removes duplicates from the database of recipes (not necessarily efficiently)
 def remove_duplicates_in_allrecipe_database():
+    ardb = load_allrecipe_database()
     removal_element = None
     ardb = load_allrecipe_database()
     for i in range(0, len(ardb)):
@@ -64,9 +69,7 @@ def populate_allrecipe_database(key, max_recipes = 10, max_reviews = 15):
         print("Fetching data for " + url)
         ardb.append(AllRecipe(url, max_reviews))
         
-    print("Saving the database of allrecipes to a pickle file!")
-    with open('allrecipe_db.pickle', 'wb') as handle:
-        pickle.dump(ardb, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    save_allrecipe_database(ardb)
         
 # returns a list of ingredients (passed as a list of strings) appearing in a given recipe
 def basic_ingredients_in_recipe(r : Recipe, ings : list):
@@ -75,12 +78,15 @@ def basic_ingredients_in_recipe(r : Recipe, ings : list):
         for i in r.allIngredients:
             if b in i.name.lower():
                 result.add(b)
-    # print("Found " + str(len(result)) + " ings in this recipe")
     return result
 
-# generates a list of basic culinary ingredients obtained from the allrecipes.com data
+# loads a list of basic ingredients (saved as a pickle file)
 def load_basic_ingredients():
-    # load the database of recipes
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['BASIC_INGREDIENTS']),'r') as bi_file:
+        return json.load(bi_file)
+
+# generates a list of basic culinary ingredients obtained from the allrecipes.com data
+def save_basic_ingredients():
     ardb = load_allrecipe_database()
     
     # first create a set of all ingredients which appear in some recipe in the database
@@ -128,6 +134,7 @@ def load_basic_ingredients():
         for i in basic_ingredients_in_recipe(ar.parsed_recipe, basic_ingredients):
             appearance_rate[i] = appearance_rate[i] + 1
     
-    basic_ingredients = set([b for b in basic_ingredients if appearance_rate[b] > 1])
-       
-    return basic_ingredients
+    basic_ingredients = [b for b in basic_ingredients if appearance_rate[b] > 1]
+    
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['BASIC_INGREDIENTS']),'w') as bi_file:
+        json.dump(basic_ingredients, bi_file)
