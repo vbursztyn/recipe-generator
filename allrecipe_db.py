@@ -70,7 +70,7 @@ def populate_allrecipe_database(key, max_recipes = 10, max_reviews = 15):
         ardb.append(AllRecipe(url, max_reviews))
         
     save_allrecipe_database(ardb)
-        
+    
 # returns a list of ingredients (passed as a list of strings) appearing in a given recipe
 def basic_ingredients_in_recipe(r : Recipe, ings : list):
     result = set()
@@ -79,11 +79,6 @@ def basic_ingredients_in_recipe(r : Recipe, ings : list):
             if b in i.name.lower():
                 result.add(b)
     return result
-
-# loads a list of basic ingredients (saved as a pickle file)
-def load_basic_ingredients():
-    with open(os.path.join(config['ALLRECIPE_DATA'], config['BASIC_INGREDIENTS']),'r') as bi_file:
-        return json.load(bi_file)
 
 # generates a list of basic culinary ingredients obtained from the allrecipes.com data
 def save_basic_ingredients():
@@ -126,7 +121,7 @@ def save_basic_ingredients():
     for a in additions:
         basic_ingredients.add(a)
 
-    # remove ingredients which don't appear at least twice among the recipes 
+    # remove ingredients which don't appear at least three times among the recipes 
     appearance_rate = dict()
     for b in basic_ingredients:
         appearance_rate[b] = 0
@@ -134,7 +129,7 @@ def save_basic_ingredients():
         for i in basic_ingredients_in_recipe(ar.parsed_recipe, basic_ingredients):
             appearance_rate[i] = appearance_rate[i] + 1
     
-    basic_ingredients = [b for b in basic_ingredients if appearance_rate[b] > 1]
+    basic_ingredients = [b for b in basic_ingredients if appearance_rate[b] > 2]
     
     with open(os.path.join(config['ALLRECIPE_DATA'], config['BASIC_INGREDIENTS']),'w') as bi_file:
         json.dump(basic_ingredients, bi_file)

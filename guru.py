@@ -3,6 +3,8 @@ import os
 from fuzzywuzzy import fuzz
 import pandas as pd
 
+from basic_ingredients import close_basic_ingredient
+
 from config import get_config
 import keywords.transforms as transforms
 
@@ -59,6 +61,11 @@ class Guru(object):
             return None
 
     def getClosestMatch(self, ingredient):
+        # use the list of basic ingredients from allrecipes.com to try to find a shorter form
+        short_form = close_basic_ingredient(ingredient)
+        if short_form:
+            ingredient = short_form
+        
         ingredient = ingredient.lower()
         matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > 80]
         if len(matches) > 1:
