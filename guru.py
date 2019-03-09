@@ -1,10 +1,11 @@
+from copy import copy, deepcopy
 import os
+from random import randint
 
 from fuzzywuzzy import fuzz
 import pandas as pd
 
 from config import get_config
-import keywords.transforms as transforms
 
 # note, some of the raw list ingredient data sources imported below
 # contain some elements from
@@ -23,7 +24,6 @@ class Guru(object):
     def __init__(self):
         self.config = get_config()
         self.setUpIngredients()
-        self.transformer = transforms.transformer
 
     def setUpIngredients(self):
         self.meats = pd.read_csv("keywords/meats.csv")
@@ -52,15 +52,16 @@ class Guru(object):
     def getIngredientBaseType(self, ingredient):
         # what is it? a meat, spice/condiment or what?
         needle = ingredient.lower()
-        bestMatch = self.getClosestMatch(needle)
+        bestMatch = self.getClosestIngredientMatch(needle)
         if bestMatch:
             return bestMatch[1]
         else:
             return None
 
-    def getClosestMatch(self, ingredient):
+    def getClosestIngredientMatch(self, ingredient):
         ingredient = ingredient.lower()
-        matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > 80]
+        matchThreshold = 80 # must be 80% similar at least -- we can tweak this as necessary
+        matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > matchThreshold]
         if len(matches) > 1:
             # let's pick the closest
             # if multiple tie as best, we'll revert to providing options
@@ -87,27 +88,52 @@ class Guru(object):
             # we've got nothing?
             return None
 
-    def transformToVegetarian(self, recipe):
-        pass
 
-    def transformFromVegetarian(self, recipe):
-        pass
+# EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
 
-    def transformToHealthy(self, recipe):
-        pass
-
-    def transformToUnhealthy(self, recipe):
-        pass
-
-    def transformCuisine(self, recipe, toCuisine):
-        pass
+    def transformRecipeStyle(self, recipe, transformType):
+        #
+        #
+        # TODO: This should...do something more than this does now...like handle the steps, etc
+        #
+        #
+        newRecipe = deepcopy(recipe)
+        newRecipe.allIngredients = self.transformIngredients(transformType, newRecipe.allIngredients)
+        # also need to take into account newRecipe.subcomponents and newRecipe.ingredientsBySubcomponent
+        return newRecipe
 
     def transformIngredients(self, type, ingredients):
         newIngs = []
         for ing in ingredients:
-            newIng = self.transformer(type, ing)
+            newIng = self.ingredientTransformer(type, ing)
             if newIng.name in [ning.name for ning in newIngs]:
                 # TODO: go replace this with something else (?)
                 pass
             newIngs.append(newIng)
         return newIngs
+
+    def ingredientTransformer(type, ingredient):
+        # type is one of meatToVeg, vegToMeat, toHealthy, toUnhealthy -- as defined in keywords/transforms.py
+        # iterates over the ingredient maps below and returns a swapout
+        # DOES NOT MANAGE THINGS LIKE: "hey, this item is already elsewhere in the recipe"
+        # incredibly flatfooted for now -- we can build this out as we see fit
+        # also, feel free to make this a class if we need to manage more state
+
+        # we could also use the fuzzy matching here, too
+
+        if ingredient.name in transformMaps[type].keys():
+            # we're basically done here
+            optionCount = len(transformMaps[type][ingredient])
+            optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
+            return transformMaps[type][ingredient][optSelection]
+
+        # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
+        if type == "meatToVeg" and ingredient.baseType == "meat":
+            candidates = transformMaps["meatToVeg"]["generic"]
+            optionCount = len(candidates)
+            optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
+            return candidates[optSelection]
+
+    def transformToCuisine(self, recipe, toCuisine):
+        # TODO: Implement this!
+        return recipe

@@ -1,5 +1,6 @@
-from recipe_fetcher import RecipeFetcher
+from guru import Guru
 from recipe import Recipe
+from recipe_fetcher import RecipeFetcher
 
 class InteractionManager(object):
     def __init__(self):
@@ -16,6 +17,7 @@ class InteractionManager(object):
         # and a list of our supported cuisines...edit at will!
         self.knownCuisines = ["indian", "italian", "mexican"]
         self.fetcher = RecipeFetcher()
+        self.guru = Guru()
 
     def startInteraction(self):
         print("\nWelcome to RecipeGuru.")
@@ -30,7 +32,7 @@ class InteractionManager(object):
             except:
                 self.recipeInputFail()
                 return False
-            self.originalRecipe = Recipe(self.rawRecipe) # so we can hang on to the original as we mutate it
+            self.originalRecipe = Recipe(self.rawRecipe, self.guru) # so we can hang on to the original as we mutate it
             self.recipe = self.originalRecipe
             self.presentRecipeOptions()
         else:
@@ -75,7 +77,7 @@ class InteractionManager(object):
     def vegIt(self):
         print("\n\nTODO: Teach the Guru to make things vegetarian.\n\n")
         print("Here it is again, now with less meat:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        self.recipe = self.guru.transformRecipeStyle(self.originalRecipe, "meatToVeg")
         print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
@@ -83,7 +85,7 @@ class InteractionManager(object):
     def unVegIt(self):
         print("\n\nTODO: Teach the Guru to make things NOT vegetarian.\n\n")
         print("Well, okay. Here you go:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        self.recipe = self.guru.transformRecipeStyle(self.originalRecipe, "vegToMeat")
         print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
@@ -91,7 +93,7 @@ class InteractionManager(object):
     def makeHealthier(self):
         print("\n\nTODO: Teach the Guru to make things healthier.\n\n")
         print("Behold, a healthier take on this recipe:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        self.recipe = self.guru.transformRecipeStyle(self.originalRecipe, "toHealthy")
         print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
@@ -99,7 +101,7 @@ class InteractionManager(object):
     def makeLessHealthy(self):
         print("\n\nTODO: Teach the Guru to make things LESS healthy.\n\n")
         print("You want it to be worse for you? Weird, but okay...try this:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        self.recipe = self.guru.transformRecipeStyle(self.originalRecipe, "toUnhealthy")
         print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
@@ -129,7 +131,7 @@ class InteractionManager(object):
     def switchCuisineTo(self, cuisine):
         print("\n\nTODO: Teach the Guru to make things in other cuisines like "+cuisine.upper()+".\n\n")
         print("Aha, I like " + cuisine.capitalize() + " food, too. Try this:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+        self.recipe = self.guru.transformToCuisine(self.originalRecipe, cuisine)
         print(self.recipe)
         print("\n\n")
         self.presentRecipeOptions(returned=True)
