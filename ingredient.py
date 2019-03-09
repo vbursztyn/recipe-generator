@@ -218,6 +218,31 @@ class Ingredient(object):
         # ask the guru for help, so we"re not constantly loading external data per ingredient
         # by now our workingStatement *should* just be the ingredient itself
         self.baseType = self.guru.getIngredientBaseType(workingStatement)
+        
+        #CLEAN UP 
+        #anything that's contained in a parantheses is most likely to specific and can interfere with parsing 
+        # so we remove it
+        
+        def remove_parantheses(s : str): 
+            left_par_index = s.find("(")
+            right_par_index = s.find(")")
+            if left_par_index == -1 or right_par_index == -1:
+                return s
+            else:
+                if left_par_index > 0 and s[left_par_index-1] == ' ':
+                    return remove_parantheses(s[:left_par_index-1] + s[right_par_index+1:])
+                else: 
+                    return remove_parantheses(s[:left_par_index] + s[right_par_index+1:])
+                
+        workingStatement = remove_parantheses(workingStatement)
+        
+        # same for anything following a " - "
+        def remove_after_dash(s : str):
+            if " - " in s:
+                s = s[0:s.find(" - ")]
+            return s
+         
+        workingStatement = remove_after_dash(workingStatement)
 
         # and save the name...
         self.name = workingStatement
