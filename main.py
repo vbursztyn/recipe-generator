@@ -98,7 +98,11 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things healthier.\n\n")
         print("Behold, a healthier take on this recipe:")
         # TO-DO: return transformation as a new Recipe model (currently returning a string)
-        print(self.guru.transformToHealthy(self.recipe))
+        transformation = self.guru.transformToHealthy(self.recipe)
+        if transformation:
+            print(transformation)
+        else:
+            print("Could not make this recipe healthier with out first strategy.")
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -106,7 +110,11 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things LESS healthy.\n\n")
         print("You want it to be worse for you? Weird, but okay...try this:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        print(self.guru.transformToUnhealthy(self.recipe))
+        transformation = self.guru.transformToUnhealthy(self.recipe)
+        if transformation:
+            print(transformation)
+        else:
+            print("Could not make this recipe unhealthier with out first strategy.")
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
