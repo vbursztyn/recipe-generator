@@ -13,11 +13,20 @@ class Ingredient(object):
         self.baseType = None
         self.quantity = None
         self.quantityModifier = None
+        self.knownHealthyModifiers = ["lean", "extra-lean", "extra lean", "lowfat", "low-fat", "low fat", "low-calorie", "low calorie", "diet"]
+        self.healthyModifier = None
+        self.knownSizeModifiers = ["large", "medium", "med", "small", "good-sized"]
+        self.sizeModifier = None
+        self.knownFlavorModifiers = ["sweet", "hot", "tangy", "smoky", "spiced"]
+        self.flavorModifier = None
+        self.knownTypeModifiers = ["dry", "ground", "flaked"]
+        self.typeModifier = None
         self.convertibleQuantity = False
         self.unit = None
         self.prepSteps = []
         self.role = None
         self.parse()
+        self.assignRole()
 
     def __repr__(self):
         output = "-----"
@@ -26,6 +35,10 @@ class Ingredient(object):
         output += "\nBASETYPE: " + str(self.baseType)
         output += "\nQUANTITY: " + str(self.quantity)
         output += "\nQUANTITY MODIFIER: " + str(self.quantityModifier)
+        output += "\nHEALTHY MODIFIER: " + str(self.healthyModifier)
+        output += "\nSIZE MODIFIER: " + str(self.sizeModifier)
+        output += "\nTYPE MODIFIER: " + str(self.typeModifier)
+        output += "\nFLAVOR MODIFIER: " + str(self.flavorModifier)
         output += "\nUNIT: " + str(self.unit)
         output += "\nPREP STEPS: " + str(self.prepSteps)
         output += "\nROLE: " + str(self.role)
@@ -36,6 +49,10 @@ class Ingredient(object):
         output = ""
         if self.quantity: output += str(self.quantity)
         if self.unit: output += " " + self.unit
+        if self.sizeModifier: output += " " + self.sizeModifier
+        if self.flavorModifier: output += " " + self.flavorModifier
+        if self.healthyModifier: output += " " + self.healthyModifier
+        if self.typeModifier: output += " " + self.typeModifier
         prepSteps = copy(self.prepSteps)
         if "ground" in prepSteps:
             output += " ground"
@@ -159,17 +176,54 @@ class Ingredient(object):
         if not self.unit:
             # look for leading parentheses/patterns like "(4 ounce)"
             # TODO: maybe build this out to be more flexible (and move to Guru for precompiling)
-            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)?[\s\S]*\) ?(?:can|bottle|jar|package|square|jigger)?s?", workingStatement)
+            specialUnit = re.match("^\(\d*[ .]?\d*(?:\/?\d*)?[\s\S]*\) ?(?:can|bottle|jar|package|square|jigger|link)?s?", workingStatement)
             if specialUnit and specialUnit.group():
                 self.unit = specialUnit.group().replace("(","").replace(")","").strip()
                 workingStatement = workingStatement[len(specialUnit.group()):].strip()
                 if "of " in workingStatement and workingStatement.lower().index("of ") == 0:
-                    workingStatement = workingStatment[3:]
+                    workingStatement = workingStatement[3:]
+
+        # SOME FINAL CLEANUP
+        workingStatement = workingStatement.replace(" -", "").strip()
+
+        # is there a healthy, size or flavor modifier in here?
+        for hm in self.knownHealthyModifiers:
+            if hm in workingStatement:
+                self.healthyModifier = hm
+                workingStatement = workingStatement.replace(hm, "").replace("  ", " ").strip()
+
+        # is there a size modifier on here?
+        for sm in self.knownSizeModifiers:
+            if sm in workingStatement:
+                self.sizeModifier = sm
+                workingStatement = workingStatement.replace(sm, "").replace("  ", " ").strip()
+
+        # is there a flavor modifier on here?
+        for fm in self.knownFlavorModifiers:
+            if fm in workingStatement:
+                self.flavorModifier = fm
+                workingStatement = workingStatement.replace(fm, "").replace("  ", " ").strip()
+
+        # is there a type modifier on here?
+        for tm in self.knownTypeModifiers:
+            if tm in workingStatement:
+                self.typeModifier = tm
+                workingStatement = workingStatement.replace(tm, "").replace("  ", " ").strip()
+
+        # if there's a hanging "bulk" in there, it's pretty likely to be implied by this point...
+        if workingStatement.find("bulk") == 0:
+            workingStatement = workingStatement[4:].strip()
 
         # GET THE BASE TYPE
         # ask the guru for help, so we"re not constantly loading external data per ingredient
         # by now our workingStatement *should* just be the ingredient itself
-        self.baseType = self.guru.get_ingredient_base_type(workingStatement)
+        self.baseType = self.guru.getIngredientBaseType(workingStatement)
 
         # and save the name...
         self.name = workingStatement
+
+    def assignRole(self):
+        # check if this was assigned during parsing
+        if self.role == "garnish": return True
+        # if not, leverage the Guru to assign it
+        pass

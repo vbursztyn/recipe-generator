@@ -16,7 +16,6 @@ class InteractionManager(object):
         # and a list of our supported cuisines...edit at will!
         self.knownCuisines = ["indian", "italian", "mexican"]
         self.fetcher = RecipeFetcher()
-        self.startInteraction()
 
     def startInteraction(self):
         print("\nWelcome to RecipeGuru.")
@@ -147,10 +146,12 @@ class InteractionManager(object):
     def run_recipes(self, searchTerm="mexican", displayCount=5):
         results = self.fetcher.search_recipes(searchTerm)
         for i in range(0, displayCount):
-            rawRecipe = self.fetcher.fetch_recipe(results[i])
+            rawRecipe = self.fetcher.fetch_recipe(results[i], False)
             recipe = Recipe(rawRecipe)
             print(recipe)
 
 
 if __name__ == "__main__":
     im = InteractionManager()
+    im.run_recipes("italian", 5)
+    # im.startInteraction()
