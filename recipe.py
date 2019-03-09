@@ -9,7 +9,7 @@ class Recipe(object):
         self.guru = Guru()
         self.parse_ingredients()
         self.assign_ingredient_roles()
-        self.steps = RecipeStep.directions_to_recipe_steps(rawRecipe['directions'], self.allIngredients)
+        self.steps = RecipeStep.RecipeDirectionsParser(rawRecipe['directions'], self.allIngredients).get_steps()
         self.parse_nutrition_information()
 
     def parse_ingredients(self):
