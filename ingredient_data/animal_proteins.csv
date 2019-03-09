@@ -1,0 +1,194 @@
+name,food_subgroup
+Abalone,Mollusks
+Red king crab,Crustaceans
+Atlantic herring,Fishes
+Atlantic mackerel,Fishes
+Painted comber,Fishes
+Atlantic pollock,Fishes
+Atlantic wolffish,Fishes
+Striped bass,Fishes
+Beaver,Rodents
+Beluga whale,Cetaceans
+Bison,Bovines
+Black bear,Other mammals
+Alaska blackfish,Fishes
+Blue crab,Crustaceans
+Blue mussel,Mollusks
+Northern bluefin tuna,Fishes
+Bluefish,Fishes
+Wild boar,Swine
+Bowhead whale,Cetaceans
+Brown bear,Other mammals
+Buffalo,Bovines
+Burbot,Fishes
+American butterfish,Fishes
+Caribou,Venison
+Common carp,Fishes
+Channel catfish,Fishes
+"Chicken (Cock, Hen, Rooster)",Poultry
+Cisco,Fishes
+Nuttall cockle,Mollusks
+Pacific cod,Fishes
+Atlantic cod,Fishes
+Common octopus,Mollusks
+Atlantic croaker,Fishes
+Cusk,Fishes
+Cuttlefish,Mollusks
+Mule deer,Venison
+Devilfish,Fishes
+Dolphin fish,Fishes
+Freshwater drum,Fishes
+Mallard duck,Poultry
+Dungeness crab,Crustaceans
+Eastern oyster,Mollusks
+Freshwater eel,Fishes
+Elk,Venison
+Emu,Poultry
+European anchovy,Fishes
+Turbot,Fishes
+Florida pompano,Fishes
+Greylag goose,Poultry
+Greenland halibut/turbot,Fishes
+Grouper,Fishes
+Guinea hen,Poultry
+Haddock,Fishes
+Hippoglossus (Common halibut),Fishes
+Horse,Equines
+Pacific jack mackerel,Fishes
+King mackerel,Fishes
+Leather chiton,Mollusks
+Common ling,Fishes
+Lingcod,Fishes
+American lobster,Crustaceans
+Milkfish,Fishes
+Monkfish,Fishes
+Moose,Venison
+Striped mullet,Fishes
+Muskrat,Rodents
+Ocean pout,Fishes
+North Pacific giant octopus,Mollusks
+Opossum,Marsupials
+Ostrich,Poultry
+Pacific herring,Fishes
+Pacific oyster,Mollusks
+Pacific rockfish,Fishes
+Velvet duck,Poultry
+Pheasant,Poultry
+Northern pike,Fishes
+Polar bear,Other mammals
+Raccoon,Other mammals
+Rainbow smelt,Fishes
+Rainbow trout,Fishes
+Orange roughy,Fishes
+Sablefish,Fishes
+Pink salmon,Fishes
+Chum salmon,Fishes
+Coho salmon,Fishes
+Sockeye salmon,Fishes
+Chinook salmon,Fishes
+Atlantic salmon,Fishes
+Spanish mackerel,Fishes
+Pacific sardine,Fishes
+Scallop,Mollusks
+Scup,Fishes
+Seatrout,Fishes
+American shad,Fishes
+Shark,Fishes
+Sheefish,Fishes
+Sheepshead,Fishes
+Skipjack tuna,Fishes
+Snapper,Fishes
+Squab,Poultry
+Squirrel,Rodents
+Greater sturgeon,Fishes
+White sucker,Fishes
+Pumpkinseed sunfish,Fishes
+Swordfish,Fishes
+Tilefish,Fishes
+"Salmonidae (Salmon, Trout)",Fishes
+Turkey,Poultry
+"Cattle (Beef, Veal)",Bovines
+Walleye,Fishes
+Alaska pollock,Fishes
+Whelk,Mollusks
+Coalfish pollock,Fishes
+Broad whitefish,Fishes
+Whitefish,Fishes
+Whiting,Fishes
+Yellowfin tuna,Fishes
+Yellowtail amberjack,Fishes
+Pollock,Fishes
+Albacore tuna,Fishes
+Gadus (Common cod),Fishes
+Atlantic halibut,Fishes
+Pacific halibut,Fishes
+Pacific salmon,Fishes
+Smelt,Fishes
+"Clupeinae (Herring, Sardine, Sprat)",Fishes
+Spiny lobster,Crustaceans
+Snow crab,Crustaceans
+Deer,Venison
+Percoidei (Bass and others),Fishes
+Perciformes (Perch-like fishes),Fishes
+Arctic ground squirrel,Rodents
+Beefalo,Bovines
+Antelope,Venison
+"Bivalvia (Clam, Mussel, Oyster)",Mollusks
+Squid,Mollusks
+Shrimp,Crustaceans
+Crayfish,Crustaceans
+Flatfish,Fishes
+"Domestic pig (Piglet, Pork)",Swine
+Great horned owl,Poultry
+Quail,Poultry
+Spot croaker,Fishes
+Atlantic menhaden,Fishes
+Anchovy,Fishes
+Blue whiting,Fishes
+Carp bream,Fishes
+Sturgeon,Fishes
+Charr,Fishes
+Crab,Crustaceans
+Common dab,Fishes
+Spiny dogfish,Fishes
+"Anatidae (Duck, Goose, Swan)",Poultry
+Anguilliformes (Eel),Fishes
+True frog,Amphibians
+Garfish,Fishes
+"Gadiformes (Cod, Hake)",Fishes
+Lake trout,Fishes
+Lemon sole,Fishes
+Clawed lobster,Crustaceans
+Lumpsucker,Fishes
+"Scombridae (Bonito, Mackerel, Tuna)",Fishes
+Marine mussel,Mollusks
+Norway haddock,Fishes
+Norway lobster,Crustaceans
+Norway pout,Fishes
+True oyster,Mollusks
+Pikeperch,Fishes
+"Pleuronectidae (Dab, Halibut, Plaice)",Fishes
+Rock ptarmigan,Poultry
+Pacific ocean perch,Fishes
+Snail,Mollusks
+True sole,Fishes
+Catfish,Fishes
+Thunnus (Common tuna),Fishes
+"Cetacea (Dolphin, Porpoise, Whale)",Cetaceans
+"Columbidae (Dove, Pigeon)",Poultry
+Conch,Mollusks
+Sausage,Ground meat
+Meatball,Ground meat
+Pate,Ground meat
+Other meat product,Meat products
+Tallow,Animal fats
+Lard,Animal fats
+Other animal fat,Animal fats
+Cichlidae (Tilapia),Fishes
+Meatloaf,Ground meat
+Cold cut,Ground meat
+Dripping,Animal fats
+Crustaceans,Crustaceans
+Fishes,Fishes
+Animal foods,Animal foods
+Mollusks,Mollusks
