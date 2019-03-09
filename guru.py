@@ -8,6 +8,8 @@ from basic_ingredients import close_basic_ingredient
 from config import get_config
 import keywords.transforms as transforms
 
+from nutritional_transformation import NutritionalTransformation
+
 # note, some of the raw list ingredient data sources imported below
 # contain some elements from
 # https://github.com/rkm660/Group10Recipe/blob/master/foods.txt
@@ -101,10 +103,10 @@ class Guru(object):
         pass
 
     def transformToHealthy(self, recipe):
-        pass
+        return NutritionalTransformation().find_healthier_ingredients(recipe)
 
     def transformToUnhealthy(self, recipe):
-        pass
+        return NutritionalTransformation().find_trashier_ingredients(recipe)
 
     def transformCuisine(self, recipe, toCuisine):
         pass

@@ -1,5 +1,9 @@
 from recipe_fetcher import RecipeFetcher
+
 from recipe import Recipe
+
+from guru import Guru
+
 
 class InteractionManager(object):
     def __init__(self):
@@ -16,6 +20,8 @@ class InteractionManager(object):
         # and a list of our supported cuisines...edit at will!
         self.knownCuisines = ["indian", "italian", "mexican"]
         self.fetcher = RecipeFetcher()
+
+        self.guru = Guru()
 
     def startInteraction(self):
         print("\nWelcome to RecipeGuru.")
@@ -91,8 +97,12 @@ class InteractionManager(object):
     def makeHealthier(self):
         print("\n\nTODO: Teach the Guru to make things healthier.\n\n")
         print("Behold, a healthier take on this recipe:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        print(self.recipe)
+        # TO-DO: return transformation as a new Recipe model (currently returning a string)
+        transformation = self.guru.transformToHealthy(self.recipe)
+        if transformation:
+            print(transformation)
+        else:
+            print("Could not make this recipe healthier with out first strategy.")
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -100,7 +110,11 @@ class InteractionManager(object):
         print("\n\nTODO: Teach the Guru to make things LESS healthy.\n\n")
         print("You want it to be worse for you? Weird, but okay...try this:")
         # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        print(self.recipe)
+        transformation = self.guru.transformToUnhealthy(self.recipe)
+        if transformation:
+            print(transformation)
+        else:
+            print("Could not make this recipe unhealthier with out first strategy.")
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
@@ -153,5 +167,5 @@ class InteractionManager(object):
 
 if __name__ == "__main__":
     im = InteractionManager()
-    im.run_recipes("italian", 5)
-    # im.startInteraction()
+    # im.run_recipes("italian", 5)
+    im.startInteraction()

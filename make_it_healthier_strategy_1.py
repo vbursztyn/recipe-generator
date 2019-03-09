@@ -103,9 +103,9 @@ def find_healthier_ingredients(recipe):
             results[healthier_version] = len(healthier_version)
     
     if len(results):
-        print(sorted(results, key=results.get, reverse=True)[0])
-    else:
-        print('Couldn\'t make it healthier this way.')
+        return sorted(results, key=results.get, reverse=True)[0]
+
+    return None
 
 
 if __name__ == '__main__':
@@ -118,7 +118,11 @@ if __name__ == '__main__':
 		rf = RecipeFetcher()
 		recipe_url = rf.search_recipes(keyword, max_amount=10)[0]
 		recipe = rf.fetch_recipe(recipe_url)
-		find_healthier_ingredients(recipe)
+		transformation = find_healthier_ingredients(recipe)
+		if transformation:
+			print(transformation)
+		else:
+			print('Could not find healthier ingredients for this recipe.')
 		print('*'*30)
 		time.sleep(2)
 

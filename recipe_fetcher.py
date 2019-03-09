@@ -11,7 +11,7 @@ import re
 config = get_config()
 
 
-class RecipeFetcher:
+class RecipeFetcher(object):
 
 
     search_base_url = 'https://www.allrecipes.com/search/results/?wt=%s&sort=re'
