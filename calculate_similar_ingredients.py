@@ -58,7 +58,7 @@ if __name__ == '__main__':
 	    similarity = Jaccard_coefficient(flavs_by_ingrs[ingredient_A],\
 	                                     flavs_by_ingrs[ingredient_B])
 	    
-	    if similarity > 0.2: # Minimum similarity
+	    if similarity > 0.5: # Minimum similarity
 	        ingredient_pairs.append((ingredient_A, ingredient_B, similarity))
 
 

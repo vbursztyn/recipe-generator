@@ -1,0 +1,329 @@
+name,country,continent
+Wagasi,Benin,Africa
+Ayibe,Ethiopia,Africa
+Caravane cheese,Mauritania,Africa
+Chhana,Bangladesh,Asia
+Chura kampo,China,Asia
+Chura loenpa,China,Asia
+Nguri,China,Asia
+Rubing,China,Asia
+Rushan,China,Asia
+Bandel,India,Asia
+Paneer,India,Asia
+Chhana,India,Asia
+Dahi Chhana,India,Asia
+Kalari,India,Asia
+Kalimpong cheese,India,Asia
+Dangke,Indonesia,Asia
+Sakura cheese,Japan,Asia
+Imsil,Korea,Asia
+Byaslag,Mongolia,Asia
+Flower of Rajya,Nepal,Asia
+Chhurpi,Nepal,Asia
+Kesong puti,Philippines,Asia
+Paneer,Sri Lanka,Asia
+Mozzarella,Italy,Europe
+Parmesan,Italy,Europe
+Mozzarella cheese,Italy,Europe
+Parmesan cheese,Italy,Europe
+Parmigiano Reggiano,Italy,Europe
+Djathë i bardhë,Albania,Europe
+Kaçkavall,Albania,Europe
+Djathë pice,Albania,Europe
+Gjizë,Albania,Europe
+Chechil,Armenia,Europe
+Bachensteiner,Austria,Europe
+Bergkäse,Austria,Europe
+Brimsen,Austria,Europe
+Gelundener Käse,Austria,Europe
+Lüneberg cheese,Austria,Europe
+Montafoner Sauerkäse,Austria,Europe
+Mondseer,Austria,Europe
+Staazer,Austria,Europe
+Steirerkäse,Austria,Europe
+Tyrolean grey,Austria,Europe
+Brussels cheese,Belgium,Europe
+Chimay cheeses,Belgium,Europe
+Herve cheese,Belgium,Europe
+Le Wavreumont,Belgium,Europe
+Limburger cheese,Belgium,Europe
+Maredsous cheese,Belgium,Europe
+Passendale cheese,Belgium,Europe
+Remoudou,Belgium,Europe
+Rodoric,Belgium,Europe
+Livno cheese,Bosnia and Herzegovina,Europe
+Travnički (Vlašić) cheese,Bosnia and Herzegovina,Europe
+Cherni Vit,Bulgaria,Europe
+Kashkaval,Bulgaria,Europe
+Sirene,Bulgaria,Europe
+Paški sir,Croatia,Europe
+Škripavac,Croatia,Europe
+Tounjski,Croatia,Europe
+Prgica,Croatia,Europe
+Dimsi,Croatia,Europe
+Akkawi,Cyprus,Europe
+Anari cheese,Cyprus,Europe
+Halloumi,Cyprus,Europe
+Kefalotyri,Cyprus,Europe
+Abertam cheese,Czech Republic,Europe
+Olomoucké syrečky,Czech Republic,Europe
+Danbo,Denmark,Europe
+Danish Blue,Denmark,Europe
+Esrom,Denmark,Europe
+Fynbo,Denmark,Europe
+Havarti,Denmark,Europe
+Maribo,Denmark,Europe
+Molbo,Denmark,Europe
+Saga,Denmark,Europe
+Samsø cheese,Denmark,Europe
+Vesterhavsost,Denmark,Europe
+Tybo,Denmark,Europe
+Atleet,Estonia,Europe
+Eesti Juust,Estonia,Europe
+Kadaka juust,Estonia,Europe
+Aura,Finland,Europe
+Lappi,Finland,Europe
+Leipäjuusto,Finland,Europe
+Oltermanni,Finland,Europe
+Raejuusto,Finland,Europe
+Sulguni,Georgia,Europe
+Anthotyros,Greece,Europe
+Chloro,Greece,Europe
+Feta,Greece,Europe
+Graviera,Greece,Europe
+Kasseri,Greece,Europe
+Kefalograviera,Greece,Europe
+Kefalotyri,Greece,Europe
+Kopanisti,Greece,Europe
+Malaka,Greece,Europe
+Manouri,Greece,Europe
+Metsovone,Greece,Europe
+Myzithra,Greece,Europe
+Tyrozouli,Greece,Europe
+Xynomizithra,Greece,Europe
+Xynotyro,Greece,Europe
+PDO,Greece,Europe
+Liptauer,Hungary,Europe
+Orda,Hungary,Europe
+Pálpusztai,Hungary,Europe
+Trappista cheese,Hungary,Europe
+Oázis,Hungary,Europe
+Balaton cheese,Hungary,Europe
+Karaván,Hungary,Europe
+Pannónia,Hungary,Europe
+Höfðingi,Iceland,Europe
+Šar cheese,Kosovo,Europe
+Jāņi cheese,Latvia,Europe
+Latvian cheese,Latvia,Europe
+Kashkaval,Macedonia,Europe
+Urdă,Macedonia,Europe
+Belo Sirenje,Macedonia,Europe
+Ġbejna,Malta,Europe
+Cașcaval,Moldova,Europe
+Urdă,Moldova,Europe
+Brânză,Moldova,Europe
+Brânză de vaci,Moldova,Europe
+Kolašinski sir,Montenegro,Europe
+Pljevaljski sir,Montenegro,Europe
+Podgorički sir,Montenegro,Europe
+Nikšićki kozji sir,Montenegro,Europe
+Njeguški sir,Montenegro,Europe
+Brunost,Norway,Europe
+Gamalost,Norway,Europe
+Geitost,Norway,Europe
+Heidal cheese,Norway,Europe
+Jarlsberg cheese,Norway,Europe
+Nøkkelost,Norway,Europe
+Norvegia,Norway,Europe
+Pultost,Norway,Europe
+Snøfrisk,Norway,Europe
+Castelo Branco cheese,Portugal,Europe
+Queijo de Nisa,Portugal,Europe
+Queijo do Pico,Portugal,Europe
+Queijo de Azeitão,Portugal,Europe
+São Jorge,Portugal,Europe
+Serra da Estrela,Portugal,Europe
+Requeijão,Portugal,Europe
+Saloio,Portugal,Europe
+Santarém cheese,Portugal,Europe
+Brânzǎ de burduf,Romania,Europe
+Brânză de Suhaia,Romania,Europe
+Caș,Romania,Europe
+Cașcaval,Romania,Europe
+Năsal cheese,Romania,Europe
+Telemea,Romania,Europe
+Urdă,Romania,Europe
+Bryndza,Russia,Europe
+Circassian cheese,Russia,Europe
+Korall,Russia,Europe
+Tvorog,Russia,Europe
+Kačkavalj,Serbia,Europe
+Pule cheese,Serbia,Europe
+Bryndza,Slovakia,Europe
+Liptauer,Slovakia,Europe
+Ovčia hrudka,Slovakia,Europe
+Kravská hrudka,Slovakia,Europe
+Korbáčiky,Slovakia,Europe
+Oštiepok,Slovakia,Europe
+Parenica,Slovakia,Europe
+Urda,Slovakia,Europe
+Tvaroh,Slovakia,Europe
+Mohant,Slovenia,Europe
+Tolminc cheese,Slovenia,Europe
+Blå Gotland,Sweden,Europe
+Grevé,Sweden,Europe
+Gräddost,Sweden,Europe
+Herrgårdsost,Sweden,Europe
+Hushållsost,Sweden,Europe
+Moose cheese,Sweden,Europe
+Prästost,Sweden,Europe
+Svecia,Sweden,Europe
+Västerbottensost,Sweden,Europe
+Ädelost,Sweden,Europe
+Bilozhar,Ukraine,Europe
+Bukovinskyi,Ukraine,Europe
+Bryndza,Ukraine,Europe
+Dobrodar,Ukraine,Europe
+Smetankowyi,Ukraine,Europe
+Syr,Ukraine,Europe
+Ukraїnskyi,Ukraine,Europe
+Vurda,Ukraine,Europe
+Lighvan cheese,Iran,Middle East
+Talesh cheese,Iran,Middle East
+Mahali cheese,Iran,Middle East
+Tzfatit,Israel,Middle East
+Tzfatit,Israel,Middle East
+Akkawi,Levant,Middle East
+Areesh,Levant,Middle East
+Baladi cheese,Levant,Middle East
+Basket cheese,Levant,Middle East
+Charkassiye,Levant,Middle East
+Jameed,Levant,Middle East
+Jibneh Arabieh,Levant,Middle East
+Jibne Baida,Levant,Middle East
+Kashkawan,Levant,Middle East
+Kashta Cheese,Levant,Middle East
+Kenafa,Levant,Middle East
+Labneh,Levant,Middle East
+Majdoule,Levant,Middle East
+Nabulsi cheese,Levant,Middle East
+Shelal,Levant,Middle East
+Surke,Levant,Middle East
+Syrian cheese,Levant,Middle East
+Tzfat cheese,Levant,Middle East
+Areesh,Egypt,Middle East
+Baramily,Egypt,Middle East
+Domiati,Egypt,Middle East
+Halumi,Egypt,Middle East
+Istanboly,Egypt,Middle East
+Mish,Egypt,Middle East
+Rumi,Egypt,Middle East
+Beyaz peynir,Turkey,Middle East
+Hellim,Turkey,Middle East
+Kaşar,Turkey,Middle East
+Kelle Peyniri,Turkey,Middle East
+Strained yogurt,Turkey,Middle East
+Mihaliç,Turkey,Middle East
+Otlu,Turkey,Middle East
+Tulum,Turkey,Middle East
+Cheese curds,Canada,North America
+Oka,Canada,North America
+Cheddar cheese,Canada,North America
+Cheddar,Canada,North America
+Queso blanco,Central America,North America
+Cuajada,Central America,North America
+Crema,Central America,North America
+Enredo,Central America,North America
+Queto,Central America,North America
+Crema,Central America,North America
+Cuajada,Central America,North America
+Quesillo,Central America,North America
+Queijo seco,Central America,North America
+Quesillo,Central America,North America
+Adobera cheese,Mexico,North America
+Añejo cheese,Mexico,North America
+Asadero cheese,Mexico,North America
+Chiapas cheese,Mexico,North America
+Cotija cheese,Mexico,North America
+Criollo cheese,Mexico,North America
+Lingallin,Mexico,North America
+Oaxaca cheese,Mexico,North America
+Queso Crema,Mexico,North America
+Chihuahua cheese,Mexico,North America
+Queso de cuajo,Mexico,North America
+Queso Fresco,Mexico,North America
+Queso Panela,Mexico,North America
+Bergenost,United States,North America
+Brick cheese,United States,North America
+Cheddar cheese,United States,North America
+Cheese curds,United States,North America
+Colby cheese,United States,North America
+Colby-Jack cheese,United States,North America
+Colorado Blackie,United States,North America
+Cream cheese,United States,North America
+Creole cream cheese,United States,North America
+Cup Cheese,United States,North America
+Farmer cheese,United States,North America
+Hoop cheese,United States,North America
+Humboldt Fog,United States,North America
+Liederkranz cheese,United States,North America
+Limburger cheese,United States,North America
+Limburger,United States,North America
+Monterey Jack cheese,United States,North America
+Monterey Jack,United States,North America
+Muenster cheese,United States,North America
+Muenster,United States,North America
+Nacho cheese,United States,North America
+Pepper jack cheese,United States,North America
+Pinconning cheese,United States,North America
+Provel cheese,United States,North America
+Red Hawk,United States,North America
+String cheese,United States,North America
+Swiss cheese,United States,North America
+Teleme cheese,United States,North America
+Tasty cheese,Australia,Oceania
+Cremoso cheese,Argentina,South America
+Criollo,Argentina,South America
+Goya,Argentina,South America
+Reggianito,Argentina,South America
+Sardo,Argentina,South America
+Chubut,Argentina,South America
+Tandil,Argentina,South America
+Mar del Plata,Argentina,South America
+Chaqueño,Bolivia,South America
+Menonita,Bolivia,South America
+Catupiry,Brazil,South America
+Minas,Brazil,South America
+Queijo coalho,Brazil,South America
+Queijo de Colônia,Brazil,South America
+Queijo Meia Cura,Brazil,South America
+Queijo Canastra,Brazil,South America
+Queijo Cobocó,Brazil,South America
+Queijo-do-Reino,Brazil,South America
+Queijo do Serro,Brazil,South America
+Queijo Manteiga,Brazil,South America
+Queijo prato,Brazil,South America
+Requeijão,Brazil,South America
+Chanco cheese,Chile,South America
+Gauda,Chile,South America
+Panquehue,Chile,South America
+Renaico,Chile,South America
+Queso Campesino,Colombia,South America
+Quesito Costeño,Colombia,South America
+Cuajada,Colombia,South America
+Queso Paipa,Colombia,South America
+Queso Pera,Colombia,South America
+Quesillo,Colombia,South America
+Guayanés cheese,Venezuela,South America
+Queso crineja,Venezuela,South America
+Queso de mano,Venezuela,South America
+Queso Llanero,Venezuela,South America
+Queso Palmita,Venezuela,South America
+Queso Parma de Barinitas,Venezuela,South America
+Queso telita,Venezuela,South America
+cottage cheese,,
+soy cheese,,
+rice cheese,,
+farmer cheese,,
+smoked cheese,,
+port wine cheese,,
