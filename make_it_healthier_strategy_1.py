@@ -36,7 +36,7 @@ def get_nutrient_for_ingredient(target_ingredient, nutrient):
     return result[0]
 
 
-def best_substitutions(original_ingredient, substitutions, criterion):
+def get_best_substitutions(original_ingredient, substitutions, criterion):
     baseline = get_nutrient_for_ingredient(original_ingredient, criterion)
     if not baseline:
         return None
@@ -57,6 +57,20 @@ def best_substitutions(original_ingredient, substitutions, criterion):
     return [(k, top_candidates[k]) for k in sorted(top_candidates, key=top_candidates.get)]
 
 
+def caption_substitutions(substitutions, bad_nutrient):
+	captions = []
+	bad_nutrient = bad_nutrient.split(',')[0]
+
+	for substitution in substitutions:
+		subst_name = substitution[0].replace('_',' ')
+		if not substitution[1]:
+			captions.append('%s (has approx. 0%% of %s)' %(subst_name, bad_nutrient))
+		else:
+			captions.append('%s (%.2f%% less %s)' %(subst_name, 100.0 - substitution[1], bad_nutrient))
+
+	return captions
+
+
 def minimize_bad_nutrient(recipe, bad_nutrient):
     results = '\nYou can make %s healthier by minimizing %s:\n\n' %(recipe['name'], bad_nutrient)
     
@@ -71,12 +85,10 @@ def minimize_bad_nutrient(recipe, bad_nutrient):
     
     for match in matches:
         similar_to_match = similar_ingredients[match[1]]
-        substitutions = best_substitutions(match[1], similar_to_match, bad_nutrient)
+        substitutions = get_best_substitutions(match[1], similar_to_match, bad_nutrient)
         if not substitutions:
             continue
-        captions = ['%s (%.2f%% less %s)'\
-                    %(substitution[0], 100.0 - substitution[1], bad_nutrient)\
-                    for substitution in substitutions]
+        captions = caption_substitutions(substitutions, bad_nutrient)
         results += '- You can replace %s by %s.\n' %(match[0], ', '.join(captions))
     
     return results
