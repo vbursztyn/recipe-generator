@@ -18,13 +18,22 @@ class RecipeFetcher:
 
 
     def search_recipes(self, keyword, max_amount = 100):
+        result = set()
+        
         search_url = self.search_base_url %('+'.join(keyword.split()))
-
-        page_html = requests.get(search_url)
-        page_graph = BeautifulSoup(page_html.content, features="lxml")
-
-        return [recipe.a['href'] for recipe in\
-               page_graph.find_all('div', {'class':'grid-card-image-container'})][:max_amount]
+        
+        page = 1
+        while len(result) < max_amount:
+            request_url = search_url + '&page=' + str(page)
+            page_html = requests.get(request_url)
+            page_graph = BeautifulSoup(page_html.content, features="lxml")
+            recipes_on_page = [recipe.a['href'] for recipe in\
+               page_graph.find_all('div', {'class':'grid-card-image-container'})]
+            for url in recipes_on_page:
+                result.add(url)
+            page = page + 1
+            random_sleep(config['SAFE_REQUEST_INTERVAL'])
+        return list(result)[:max_amount]
 
 
     def fetch_nutrition_facts(self, recipe_url):
