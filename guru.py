@@ -100,34 +100,41 @@ class Guru(object):
 # EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
 
     #
-    # MAIN TWO TRANSFORMER STUBS
+    # MAIN TRANSFORMER METHOD
     #
 
     def transformRecipeStyle(self, recipe, transformType):
         newRecipe = deepcopy(recipe)
-        swappedIngs, addedIngs = self.transformIngredients(newRecipe, transformType)
+        if newRecipe.subcomponents:
+            # do it by subcomponent
+            allNewIngs = []
+            for subc in newRecipe.subcomponents:
+                swappedIngs, addedIngs = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType)
+                newRecipe.ingredientsBySubcomponent[subc] = swappedIngs+addedIngs
+                allNewIngs.append(subc)
+                allNewIngs.extend(swappedIngs+addedIngs)
+            newRecipe.allIngredients = allNewIngs
+        else:
+            # do it all at once
+            swappedIngs, addedIngs = self.transformIngredients(newRecipe.allIngredients, transformType)
+            newRecipe.allIngredients = swappedIngs+addedIngs
 
         # okay, we've got new ingredients
-        # TODO: update the newRecipe.allIngredients and newRecipe.subcomponents / newRecipe.ingredientsBySubcomponent as necessary
         # TODO: change the instructions based on the ingredient shift
-        # NOTE THAT: newIngredients and recipe.allIngredients should be mirrored lists (for tracking what's changed)
+        # NOTE: anything in newRecipe.allIngredients or newRecipe.ingredientsBySubcomponent will have either
+        # self.altered = True or self.addedByTransform = True if it was changed/added during transform
         return newRecipe
-
-    def transformToCuisine(self, recipe, toCuisine):
-        # TODO: Implement this!
-        return recipe
-
 
     #
     # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
     #
 
-    def transformIngredients(self, recipe, type):
+    def transformIngredients(self, allIngredients, type):
         newIngList = []
         addedIngs = []
         replacedIngs = [] # for dev bookkeeping
         replaceCount = 0
-        for ing in recipe.allIngredients:
+        for ing in allIngredients:
             # get the hardcoded cases first, if possible
             swappedIng = self.ingredientTransformer(ing, type)
 
@@ -168,6 +175,9 @@ class Guru(object):
             # TODO
 
             pass
+
+        for ai in addedIngs:
+            ai.addedByTransform = True
 
         return newIngList, addedIngs
 

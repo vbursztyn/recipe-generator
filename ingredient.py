@@ -9,6 +9,7 @@ class Ingredient(object):
     def __init__(self, statement, guru = None):
         self.statement = statement
         self.altered = False # changed during recipe/ingredient transformation
+        self.addedByTransform = False # changed during recipe/ingredient transformation
         self.guru = guru if guru != None else Guru()
         self.name = None
         self.baseType = None
