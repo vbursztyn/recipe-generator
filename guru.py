@@ -98,6 +98,10 @@ class Guru(object):
 
 # EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
 
+    #
+    # MAIN TWO TRANSFORMER STUBS
+    #
+
     def transformRecipeStyle(self, recipe, transformType):
         newRecipe = deepcopy(recipe)
         if transformType == "meatToVeg":
@@ -120,9 +124,15 @@ class Guru(object):
         # NOTE THAT: newIngredients and recipe.allIngredients should be mirrored lists (for tracking what's changed)
         return newRecipe
 
-    def transformCuisine(self, recipe, toCuisine):
-        # TODO: implement this
-        pass
+    def transformToCuisine(self, recipe, toCuisine):
+        # TODO: Implement this!
+        return recipe
+
+
+    #
+    # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
+    # Currently used for vegToMeat and meatToVeg transforms above
+    #
 
     def transformIngredients(self, recipe, type):
         newIngs = []
@@ -170,7 +180,3 @@ class Guru(object):
             optionCount = len(candidates)
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
             return candidates[optSelection]
-
-    def transformToCuisine(self, recipe, toCuisine):
-        # TODO: Implement this!
-        return recipe
