@@ -1,9 +1,6 @@
-def transformer(type, ingredient):
-    # is the base type worth looking at?
-    if type == "meatToVeg" and ingredient.baseType != "meatbase":
-        return ingredient
+TRANSFORMS = {}
 
-meatToVegMap = {
+TRANSFORMS["meatToVeg"] = {
     "generic": ["tofu", "tempeh", "seitan"],
     "chicken": ["tofu", "tempeh", "seitan"],
     "turkey": ["Tofurkey"],
@@ -46,7 +43,7 @@ meatToVegMap = {
     "sushi": ["avocado"]
 }
 
-vegToMeatMap = {
+TRANSFORMS["vegToMeat"] = {
     "tofu": ["chicken"],
     "tempeh": ["beef"],
     "seitan": ["pork"],
@@ -60,7 +57,7 @@ vegToMeatMap = {
     "vegetarian baked beans": ["baked beans with lard"]
 }
 
-toHealthyMap = {
+TRANSFORMS["toHealthy"] = {
     "white rice": ["brown rice"],
     "lard": ["low-fat margarine"],
     "shortening": ["low-fat margarine"],
@@ -75,7 +72,7 @@ toHealthyMap = {
     "canola oil": ["olive oil", "coconut oil"]
 }
 
-toUnhealthyMap = {
+TRANSFORMS["toUnhealthy"] = {
     "margarine": ["butter"],
     "butter": ["lard"],
     "egg white": ["egg"],
@@ -91,5 +88,3 @@ toUnhealthyMap = {
     "black beans": ["pinto beans with lard"],
     "extra virgin olive oil": ["canola oil"]
 }
-
-reduceForHealth = ["salt","sugar","cream"]

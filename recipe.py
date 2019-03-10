@@ -3,10 +3,10 @@ import RecipeStep
 from guru import Guru
 
 class Recipe(object):
-    def __init__(self, rawRecipe):
+    def __init__(self, rawRecipe, guru=None):
         self.rawRecipe = rawRecipe
         self.name = rawRecipe["name"]
-        self.guru = Guru()
+        self.guru = guru if guru else Guru()
         self.parse_ingredients()
         self.assign_ingredient_roles()
         self.steps = RecipeStep.RecipeDirectionsParser(rawRecipe['directions'], self.allIngredients).get_steps()
