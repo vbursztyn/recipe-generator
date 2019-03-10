@@ -2,6 +2,12 @@ TRANSFORMS = {}
 
 transformer = []
 
+# THESE FIRST TWO ARE LISTS USED BY INGREDIENT TRANSFORMER WHEN DECIDING WHAT TO DOUBLE OR HALVE FOR toHealthy/toUnhealthy
+# Please add whatever makes sense...
+TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream"]
+TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
+
+
 TRANSFORMS["meatToVeg"] = {
     "generic": ["tofu", "tempeh", "seitan"],
     "chicken": ["tofu", "tempeh", "seitan"],
@@ -52,14 +58,16 @@ TRANSFORMS["vegToMeat"] = {
     "vegetable bouillon": ["chicken bouillon"],
     "vegetable broth": ["chicken broth"],
     "vegetable stock": ["chicken stock"],
-    "vegetarian refried black beans": ["refried beans with lard"],
-    "vegetarian black beans": ["pinto beans with lard"],
-    "vegetarian beans": ["pinto beans with lard"],
+    "refried black beans": ["refried beans with lard"],
     "black beans": ["pinto beans with lard"],
-    "vegetarian baked beans": ["baked beans with lard"]
+    "beans": ["pinto beans with lard"],
+    "baked beans": ["baked beans with lard"],
+    "kidney beans": ["pinto beans with lard"]
 }
 
 TRANSFORMS["toHealthy"] = {
+    "beef": ["chicken"],
+    "hamburger": ["turkey burger"],
     "white rice": ["brown rice"],
     "lard": ["low-fat margarine"],
     "shortening": ["low-fat margarine"],
@@ -71,7 +79,10 @@ TRANSFORMS["toHealthy"] = {
     "lettuce": ["kale"],
     "mayonnaise": ["low-fat salad dressing"],
     "vegetable oil": ["olive oil", "coconut oil"],
-    "canola oil": ["olive oil", "coconut oil"]
+    "canola oil": ["olive oil", "coconut oil"],
+    "vegetable broth": ["water"],
+    "beef broth": ["water"],
+    "chicken broth": ["water"]
 }
 
 TRANSFORMS["toUnhealthy"] = {

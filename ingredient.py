@@ -8,6 +8,8 @@ from keywords.prep import PREPSTEPS
 class Ingredient(object):
     def __init__(self, statement, guru = None):
         self.statement = statement
+        self.altered = False # changed during recipe/ingredient transformation
+        self.addedByTransform = False # changed during recipe/ingredient transformation
         self.guru = guru if guru != None else Guru()
         self.name = None
         self.baseType = None
@@ -70,12 +72,11 @@ class Ingredient(object):
         return output
 
     def __mul__(self, x):
-        if not isinstance(x, (int, float)):
-            raise Exception("Multiplying by a non-number when changing an ingredient amount? That's not how you do math!")
-        newIngredient = deepcopy(self)
         if isinstance(x, (int, float)) and self.convertibleQuantity:
+            newIngredient = deepcopy(self)
             newIngredient.quantity = self.quantity * x
-        return newIngredient
+            return newIngredient
+        return self
 
     __rmul__ = __mul__
 

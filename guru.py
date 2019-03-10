@@ -26,6 +26,7 @@ class Guru(object):
     Do any heavy loading here (regex, pandas, etc) so it gets done once and passed around.'''
     def __init__(self):
         self.config = get_config()
+        self.knownCuisines = ["indian", "italian", "mexican"] # TODO: KEEP THIS IN SYNC WITH keywords/transforms.py
         self.setUpIngredients()
 
     def setUpIngredients(self):
@@ -95,71 +96,100 @@ class Guru(object):
             # we've got nothing?
             return None
 
-
-# EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
-
     #
-    # MAIN TWO TRANSFORMER STUBS
+    # MAIN TRANSFORMER METHOD
     #
 
     def transformRecipeStyle(self, recipe, transformType):
         newRecipe = deepcopy(recipe)
-        if transformType == "meatToVeg":
-            # STUBBED WITH THE METHOD I (DREW) WROTE TO USE HARDCODED STUFF FROM keywords/transforms.py
-            newIngredients = self.transformIngredients(recipe, transformType)
-        elif transformType == "vegToMeat":
-            # STUBBED WITH THE METHOD I (DREW) WROTE TO USE HARDCODED STUFF FROM keywords/transforms.py
-            newIngredients = self.transformIngredients(recipe, transformType)
-        elif transformType == "toHealthy":
-            # STUBBED WITH VICTOR'S METHOD
-             newIngredients = NutritionalTransformation().find_healthier_ingredients(recipe)
-        elif transformType == "toUnhealthy":
-            # STUBBED WITH VICTOR'S METHOD
-            newIngredients = NutritionalTransformation().find_trashier_ingredients(recipe)
+        if newRecipe.subcomponents:
+            # do it by subcomponent
+            allNewIngs = []
+            for subc in newRecipe.subcomponents:
+                newIngs = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType)
+                newRecipe.ingredientsBySubcomponent[subc] = newIngs
+                allNewIngs.append(subc)
+                allNewIngs.extend(newIngs)
+            newRecipe.allIngredients = allNewIngs
         else:
-            return newRecipe
+            # do it all at once
+            newRecipe.allIngredients = self.transformIngredients(newRecipe.allIngredients, transformType)
+
         # okay, we've got new ingredients
-        # TODO: update the newRecipe.allIngredients and newRecipe.subcomponents / newRecipe.ingredientsBySubcomponent as necessary
         # TODO: change the instructions based on the ingredient shift
-        # NOTE THAT: newIngredients and recipe.allIngredients should be mirrored lists (for tracking what's changed)
+        # NOTE: anything in newRecipe.allIngredients or newRecipe.ingredientsBySubcomponent will have either
+        # self.altered = True or self.addedByTransform = True if it was changed/added during transform
+
+        # THOUGHT: DEDUPE!
+        # Example: we might have added water to a recipe with water already in it and need to combine those things
+        # However, we only want to do this if they appear in the same step (like broth (now water) + water in a soup base)
+        # TODO
+
         return newRecipe
-
-    def transformToCuisine(self, recipe, toCuisine):
-        # TODO: Implement this!
-        return recipe
-
 
     #
     # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
-    # Currently used for vegToMeat and meatToVeg transforms above
     #
 
-    def transformIngredients(self, recipe, type):
-        newIngs = []
+    def transformIngredients(self, allIngredients, type):
+        newIngList = []
+        addedIngs = []
+        replacedIngs = [] # for dev bookkeeping
         replaceCount = 0
-        for ing in recipe.allIngredients:
-            newIng = self.ingredientTransformer(type, ing)
-            if newIng:
+        for ing in allIngredients:
+            # get the hardcoded cases first, if possible
+            swappedIng = self.ingredientTransformer(ing, type)
+
+            # special cases for Victor's methods
+            # call these second for anything we don't have hard-coded cases for
+            if not swappedIng and type == "toHealthy":
+                swappedIng = NutritionalTransformation().find_healthier_ingredients(ing)
+            elif not swappedIng and type == "toUnhealthy":
+                swappedIng = NutritionalTransformation().find_trashier_ingredients(ing)
+
+            if swappedIng:
                 replaceCount += 1
-                if newIng.name in [ning.name for ning in newIngs]:
-                    # TODO: go replace this with something else (?)
-                    pass
-                newIngs.append(newIng)
+                # copy over the particulars
+                replacerIng = deepcopy(ing)
+                replacerIng.name = swappedIng
+                replacerIng.altered = True
+                replacerIng.baseType = self.getIngredientBaseType(swappedIng)
+                # TODO: update anything else?
+                newIngList.append(replacerIng)
+                replacedIngs.append(replacerIng)
             else:
-                newIngs.append(ing)
+                # no replacement found...add the old ing back to the new list
+                newIngList.append(ing)
 
         if replaceCount == 0:
+            # we didn't replace anything in the recipe
             # special cases!
-            # if replaceCount == 0 and type is vegToMeat, add meat
+            # if replaceCount == 0 and type is vegToMeat, add meat to addedIngs
             # TODO
 
-            # if replaceCount == 0 and type is toUnhealthy, double unhealthy ingredients: salt, sugar, baseType oil
+            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices to addedIngs
             # TODO
             pass
 
-        return newIngs
+        if type in ["toHealthy", "toUnhealthy"]:
+            # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
+            # if type is toUnhealthy, double unhealthy ingredients/baseTypes
+            # see lists in keywords/transforms.py
+            modifier = 0.5 if type == "toHealthy" else 2
+            for i, ing in enumerate(newIngList):
+                if ing.name in TRANSFORMS["unhealthyIngredients"] or ing.baseType in TRANSFORMS["unhealthyBaseTypes"]:
+                    newIngList[i] = ing * modifier
 
-    def ingredientTransformer(self, type, ingredient):
+        for ai in addedIngs:
+            # flag the things that are being added as such
+            ai.addedByTransform = True
+
+        outputIngs = newIngList + addedIngs
+
+        return outputIngs
+
+    def ingredientTransformer(self, ingredient, type):
+        # NOTE: CURRENTLY RETURNS A STRING NAME OF INGREDIENT TO MATCH SIGNATURE METHOD OF OTHER TRANSFORMERS
         # type is one of meatToVeg, vegToMeat, toHealthy, toUnhealthy -- as defined in keywords/transforms.py
         # iterates over the ingredient maps below and returns a swapout
         # DOES NOT MANAGE THINGS LIKE: "hey, this item is already elsewhere in the recipe"
@@ -167,12 +197,14 @@ class Guru(object):
         # also, feel free to make this a class if we need to manage more state
 
         # we could also use the fuzzy matching here, too
+        if type not in TRANSFORMS:
+            return None
 
         if ingredient.name in TRANSFORMS[type].keys():
             # we're basically done here
-            optionCount = len(TRANSFORMS[type][ingredient])
+            optionCount = len(TRANSFORMS[type][ingredient.name])
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
-            return TRANSFORMS[type][ingredient][optSelection]
+            return TRANSFORMS[type][ingredient.name][optSelection]
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
         if type == "meatToVeg" and ingredient.baseType == "meat":
@@ -180,3 +212,5 @@ class Guru(object):
             optionCount = len(candidates)
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
             return candidates[optSelection]
+
+        return None
