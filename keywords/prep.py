@@ -18,6 +18,7 @@ PREPSTEPS = [
     "whipped",
     "very finely shredded",
     "finely shredded",
+    "mashed",
     "shredded",
     "packed",
     "divided",

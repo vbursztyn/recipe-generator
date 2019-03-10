@@ -15,9 +15,9 @@ class InteractionManager(object):
             ("Nevermind, let's start over with a different recipe.", self.recipePrompt)
         ]
         # and a list of our supported cuisines...edit at will!
-        self.knownCuisines = ["indian", "italian", "mexican"]
         self.fetcher = RecipeFetcher()
         self.guru = Guru()
+        self.knownCuisines = self.guru.knownCuisines
 
     def startInteraction(self):
         print("\nWelcome to RecipeGuru.")

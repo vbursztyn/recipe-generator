@@ -43,7 +43,7 @@ class NutritionalTransformation(object):
         baseline = self.get_nutrient_for_ingredient(original_ingredient, criterion)
         if not baseline:
             return None
-        
+
         candidates = {}
         for substitution in substitutions:
             substitution_quality = self.get_nutrient_for_ingredient(substitution, criterion)
@@ -60,10 +60,10 @@ class NutritionalTransformation(object):
                     # If our baseline has less of this bad nutrient (criterion) than the substitution:
                     if (baseline[0] < substitution_quality[0]):
                         candidates[substitution] = substitution_quality[0] / (baseline[0] + 0.01) * 100
-        
+
         top_cutoff = len(candidates)//10 if len(candidates) >= 20 else len(candidates)//2
         top_candidates = { k : v for k, v in itertools.islice(candidates.items(),top_cutoff) }
-        
+
         if healthier: # HEALTHIER
             return [(k, top_candidates[k]) for k in sorted(top_candidates, key=top_candidates.get)]
         # TRASHIER
@@ -87,62 +87,55 @@ class NutritionalTransformation(object):
         return captions
 
 
-    def optimize_bad_nutrient(self, recipe, bad_nutrient, minimize=True):
-        if minimize:
-            results = '\nYou can make %s healthier by minimizing %s:\n\n' %(recipe.name, bad_nutrient)
-        else:
-            results = '\nYou can make %s unhealthier by maximizing %s:\n\n' %(recipe.name, bad_nutrient)
-        
-        ingredients = [ingredient.name for ingredient in recipe.allIngredients]
+    def optimize_bad_nutrient(self, ingredient, bad_nutrient, minimize=True):
+        ingredientName = ingredient.name
         all_ingredients = self.similar_ingredients.keys()
         matches = []
-        for ingredient in ingredients:
-            query = ingredient.replace(' ','_')
-            match = rank_matches(query, all_ingredients, cutoff=2)
-            if match:
-                matches.append((ingredient, match[0]))
-        
-        for match in matches:
-            similar_to_match = self.similar_ingredients[match[1]]
-            # Make it: HEALTHIER
-            if minimize:
-                substitutions = self.get_substitutions(match[1], similar_to_match, bad_nutrient)
-            # Make it: TRASHIER
-            else:
-                substitutions = self.get_substitutions(match[1], similar_to_match, bad_nutrient,\
-                                                       healthier=False)
-            if not substitutions:
-                continue
-            captions = self.caption_substitutions(substitutions, bad_nutrient)
-            results += '- You can replace %s by %s.\n' %(match[0], ', '.join(captions))
-        
-        return results
+        query = ingredientName.replace(' ','_')
+        matches = rank_matches(query, all_ingredients, cutoff=2)
+        if matches:
+            match = matches[0]
+        else:
+            return None
+
+        similar_to_match = self.similar_ingredients[match]
+        # Make it: HEALTHIER
+        if minimize:
+            substitutions = self.get_substitutions(match, similar_to_match, bad_nutrient)
+        # Make it: TRASHIER
+        else:
+            substitutions = self.get_substitutions(match, similar_to_match, bad_nutrient,\
+                                                   healthier=False)
+        if not substitutions:
+            return None
+
+        # just going to go with the first in the list as the option for now
+        return substitutions[0][0].replace('_',' ')
 
 
-    def find_healthier_ingredients(self, recipe):
+    def find_healthier_ingredients(self, ingredient):
         results = {}
 
         for bad_nutrient in self.unhealthy_nutrients:
-            healthier_version = self.optimize_bad_nutrient(recipe, bad_nutrient)
-            if '- You can replace' in healthier_version:
-                results[healthier_version] = len(healthier_version)
-        
-        if len(results):
-            return sorted(results, key=results.get, reverse=True)[0]
+            healthier_version = self.optimize_bad_nutrient(ingredient, bad_nutrient)
+            # if '- You can replace' in healthier_version:
+            #     results[healthier_version] = len(healthier_version)
 
-        return None
+        # if len(results):
+        #     return sorted(results, key=results.get, reverse=True)[0]
+
+        return healthier_version
 
 
     def find_trashier_ingredients(self, recipe):
         results = {}
 
         for bad_nutrient in self.unhealthy_nutrients:
-            healthier_version = self.optimize_bad_nutrient(recipe, bad_nutrient, minimize=False)
-            if '- You can replace' in healthier_version:
-                results[healthier_version] = len(healthier_version)
-        
-        if len(results):
-            return sorted(results, key=results.get, reverse=True)[0]
+            trashier_version = self.optimize_bad_nutrient(recipe, bad_nutrient, minimize=False)
+        #     if '- You can replace' in healthier_version:
+        #         results[healthier_version] = len(healthier_version)
+        #
+        # if len(results):
+        #     return sorted(results, key=results.get, reverse=True)[0]
 
-        return None
-
+        return trashier_version
