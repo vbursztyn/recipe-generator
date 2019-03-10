@@ -1,5 +1,7 @@
 TRANSFORMS = {}
 
+transformer = []
+
 TRANSFORMS["meatToVeg"] = {
     "generic": ["tofu", "tempeh", "seitan"],
     "chicken": ["tofu", "tempeh", "seitan"],
