@@ -5,7 +5,10 @@ from random import randint
 from fuzzywuzzy import fuzz
 import pandas as pd
 
+from basic_ingredients import close_basic_ingredient
 from config import get_config
+from nutritional_transformation import NutritionalTransformation
+from keywords.transforms import TRANSFORMS
 
 # note, some of the raw list ingredient data sources imported below
 # contain some elements from
@@ -59,6 +62,10 @@ class Guru(object):
             return None
 
     def getClosestIngredientMatch(self, ingredient):
+        # use the list of basic ingredients from allrecipes.com to try to find a shorter form
+        short_form = close_basic_ingredient(ingredient)
+        if short_form:
+            ingredient = short_form
         ingredient = ingredient.lower()
         matchThreshold = 80 # must be 80% similar at least -- we can tweak this as necessary
         matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > matchThreshold]
@@ -92,27 +99,57 @@ class Guru(object):
 # EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
 
     def transformRecipeStyle(self, recipe, transformType):
-        #
-        #
-        # TODO: This should...do something more than this does now...like handle the steps, etc
-        #
-        #
         newRecipe = deepcopy(recipe)
-        newRecipe.allIngredients = self.transformIngredients(transformType, newRecipe.allIngredients)
-        # also need to take into account newRecipe.subcomponents and newRecipe.ingredientsBySubcomponent
+        if transformType == "meatToVeg":
+            # STUBBED WITH THE METHOD I (DREW) WROTE TO USE HARDCODED STUFF FROM keywords/transforms.py
+            newIngredients = self.transformIngredients(recipe, transformType)
+        elif transformType == "vegToMeat":
+            # STUBBED WITH THE METHOD I (DREW) WROTE TO USE HARDCODED STUFF FROM keywords/transforms.py
+            newIngredients = self.transformIngredients(recipe, transformType)
+        elif transformType == "toHealthy":
+            # STUBBED WITH VICTOR'S METHOD
+             newIngredients = NutritionalTransformation().find_healthier_ingredients(recipe)
+        elif transformType == "toUnhealthy":
+            # STUBBED WITH VICTOR'S METHOD
+            newIngredients = NutritionalTransformation().find_trashier_ingredients(recipe)
+        else:
+            return newRecipe
+        # okay, we've got new ingredients
+        # TODO: update the newRecipe.allIngredients and newRecipe.subcomponents / newRecipe.ingredientsBySubcomponent as necessary
+        # TODO: change the instructions based on the ingredient shift
+        # NOTE THAT: newIngredients and recipe.allIngredients should be mirrored lists (for tracking what's changed)
         return newRecipe
 
-    def transformIngredients(self, type, ingredients):
+    def transformCuisine(self, recipe, toCuisine):
+        # TODO: implement this
+        pass
+
+    def transformIngredients(self, recipe, type):
         newIngs = []
-        for ing in ingredients:
+        replaceCount = 0
+        for ing in recipe.allIngredients:
             newIng = self.ingredientTransformer(type, ing)
-            if newIng.name in [ning.name for ning in newIngs]:
-                # TODO: go replace this with something else (?)
-                pass
-            newIngs.append(newIng)
+            if newIng:
+                replaceCount += 1
+                if newIng.name in [ning.name for ning in newIngs]:
+                    # TODO: go replace this with something else (?)
+                    pass
+                newIngs.append(newIng)
+            else:
+                newIngs.append(ing)
+
+        if replaceCount == 0:
+            # special cases!
+            # if replaceCount == 0 and type is vegToMeat, add meat
+            # TODO
+
+            # if replaceCount == 0 and type is toUnhealthy, double unhealthy ingredients: salt, sugar, baseType oil
+            # TODO
+            pass
+
         return newIngs
 
-    def ingredientTransformer(type, ingredient):
+    def ingredientTransformer(self, type, ingredient):
         # type is one of meatToVeg, vegToMeat, toHealthy, toUnhealthy -- as defined in keywords/transforms.py
         # iterates over the ingredient maps below and returns a swapout
         # DOES NOT MANAGE THINGS LIKE: "hey, this item is already elsewhere in the recipe"
@@ -121,15 +158,15 @@ class Guru(object):
 
         # we could also use the fuzzy matching here, too
 
-        if ingredient.name in transformMaps[type].keys():
+        if ingredient.name in TRANSFORMS[type].keys():
             # we're basically done here
-            optionCount = len(transformMaps[type][ingredient])
+            optionCount = len(TRANSFORMS[type][ingredient])
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
-            return transformMaps[type][ingredient][optSelection]
+            return TRANSFORMS[type][ingredient][optSelection]
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
         if type == "meatToVeg" and ingredient.baseType == "meat":
-            candidates = transformMaps["meatToVeg"]["generic"]
+            candidates = TRANSFORMS["meatToVeg"]["generic"]
             optionCount = len(candidates)
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
             return candidates[optSelection]

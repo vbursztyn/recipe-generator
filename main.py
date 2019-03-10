@@ -155,5 +155,5 @@ class InteractionManager(object):
 
 if __name__ == "__main__":
     im = InteractionManager()
-    im.run_recipes("italian", 5)
-    # im.startInteraction()
+    # im.run_recipes("italian", 5)
+    im.startInteraction()

@@ -1,6 +1,6 @@
-transformMaps = {}
+TRANSFORMS = {}
 
-transformMaps["meatToVeg"] = {
+TRANSFORMS["meatToVeg"] = {
     "generic": ["tofu", "tempeh", "seitan"],
     "chicken": ["tofu", "tempeh", "seitan"],
     "turkey": ["Tofurkey"],
@@ -43,7 +43,7 @@ transformMaps["meatToVeg"] = {
     "sushi": ["avocado"]
 }
 
-transformMaps["vegToMeat"] = {
+TRANSFORMS["vegToMeat"] = {
     "tofu": ["chicken"],
     "tempeh": ["beef"],
     "seitan": ["pork"],
@@ -57,7 +57,7 @@ transformMaps["vegToMeat"] = {
     "vegetarian baked beans": ["baked beans with lard"]
 }
 
-transformMaps["toHealthy"] = {
+TRANSFORMS["toHealthy"] = {
     "white rice": ["brown rice"],
     "lard": ["low-fat margarine"],
     "shortening": ["low-fat margarine"],
@@ -72,7 +72,7 @@ transformMaps["toHealthy"] = {
     "canola oil": ["olive oil", "coconut oil"]
 }
 
-transformMaps["toUnhealthy"] = {
+TRANSFORMS["toUnhealthy"] = {
     "margarine": ["butter"],
     "butter": ["lard"],
     "egg white": ["egg"],

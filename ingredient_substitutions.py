@@ -1,16 +1,21 @@
-from allrecipe_db import AllRecipe, load_allrecipe_database, load_basic_ingredients, basic_ingredients_in_recipe
-from recipe import Recipe
-from ingredient import Ingredient
+import os 
+import json
+import pickle
 from operator import itemgetter
 
-ardb = load_allrecipe_database()
-basic_ingredients = load_basic_ingredients()
+from allrecipe_db import AllRecipe, load_allrecipe_database, load_basic_ingredients, basic_ingredients_in_recipe
+from recipe import Recipe
+from config import get_config
+from ingredient import Ingredient
+
+config = get_config()
 
 # a set of ingredients which are common spices
 common_spices = ['salt', 'pepper', 'garlic']
 
 # creates pairs of distinct basic ingredients
 def compute_pairs_of_ingredients():
+    basic_ingredients = load_basic_ingredients()
     result = set()
     for b in basic_ingredients:
         for c in basic_ingredients:
@@ -18,15 +23,17 @@ def compute_pairs_of_ingredients():
                 result.add((b,c))
     return result
 
-pairs_of_ingredients = compute_pairs_of_ingredients()
-
 # returns a dictionary, indexed by basic_ingredients, which keeps track in what proportion of recipes 
 # a given ingredient appears 
 def compute_appearance_rate():
+    ardb = load_allrecipe_database()
+    basic_ingredients = load_basic_ingredients()
+
     result = dict()
-    number_of_recipes = len(ardb)
     for b in basic_ingredients:
         result[b] = 0
+    
+    number_of_recipes = len(ardb)
     
     for ar in ardb:
         appearing = basic_ingredients_in_recipe(ar.parsed_recipe, basic_ingredients)
@@ -37,16 +44,19 @@ def compute_appearance_rate():
         result[b] = result[b] / number_of_recipes
     return result
 
-appearance_rate = compute_appearance_rate()
-
 # returns a dictionary, indexed by pairs of distinct basic ingredients (a, b), which keeps "similarity coefficients", ie. the
 # percentage of dishes containing a which also contain b, stored as a float in [0, 1] 
 def compute_similarity_coefficients():
-    # initializing the dictionary
-    similarity_coefficients = dict()
+    appearance_rate = compute_appearance_rate()
+    pairs_of_ingredients = compute_pairs_of_ingredients()
+    basic_ingredients = load_basic_ingredients()
+    ardb = load_allrecipe_database()
+    
+     # initializing the dictionary
+    similarity_coefficients = dict()  
     for p in pairs_of_ingredients: 
         similarity_coefficients[p] = 0
-        
+   
     # we count in how many recipes a given iongredient appears
     appearances = dict()
     for b in basic_ingredients:
@@ -76,7 +86,11 @@ def compute_similarity_coefficients():
 # (that is, a pair (a, b) has a high "equivalence index" if there are many ingredients which often go with a and b, themselves
 # but a, b don't often go together
 def compute_equivalence_index(cutoff = 0.5):
+    basic_ingredients = load_basic_ingredients()
+    pairs_of_ingredients = compute_pairs_of_ingredients()    
     sc = compute_similarity_coefficients()
+    
+    # initialize the result dictionary
     equiv_index = dict()
     for p in pairs_of_ingredients:
         equiv_index[p] = 0
@@ -97,15 +111,18 @@ def compute_equivalence_index(cutoff = 0.5):
         equiv_index[p] = equiv_index[p] * (1 - sc[p])
     return equiv_index
 
-equivalence_index = compute_equivalence_index()
-
 # returns a dictionary of replacements, indexed by basic_ingredient
 # the value compute_best_replacements()[b] at an ingredient b is a list of ingredients sorted 
 # from ones that are the best replacements of b to the worst 
 # (here, we measure what is a good replacement using the "equivalence index" of compute_equivalence_index()
 def compute_best_replacements():
+    ei = compute_equivalence_index()
+    basic_ingredients = load_basic_ingredients()
+    pairs_of_ingredients = compute_pairs_of_ingredients()
+    appearance_rate = compute_appearance_rate()
+    
     result = dict()
-    ei = equivalence_index
+
     for b in basic_ingredients:
         result[b] = []
 
@@ -121,4 +138,22 @@ def compute_best_replacements():
         result[b] = simplified_result
     return result
 
-best_replacements = compute_best_replacements()
+def load_best_replacements_table():
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['REPLACEMENT_TABLE']),'r') as br_file:
+        return json.load(br_file)
+
+def create_datafiles():
+    sc = compute_similarity_coefficients()
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['SIMILARITY_COEFFICIENT']),'wb') as sc_file:
+        pickle.dump(sc, sc_file)
+        
+    ei = compute_equivalence_index()
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['EQUIVALENCE_INDEX']),'wb') as ei_file:
+        pickle.dump(ei, ei_file)
+
+    br = compute_best_replacements()
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['REPLACEMENT_TABLE']),'w') as br_file:
+        json.dump(br, br_file)
+        
+if __name__ == "__main__":
+    create_datafiles()
