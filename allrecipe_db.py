@@ -90,6 +90,21 @@ def save_basic_ingredients():
         basic_ingredients = basic_ingredients + [i.name.lower() for i in ar.parsed_recipe.allIngredients]
     basic_ingredients = set(basic_ingredients)
     
+    # remove ingredients which contain ":" or " inch" because they're parsing artifacts
+    basic_ingredients = set([i for i in basic_ingredients if not ':' in i])
+    basic_ingredients = set([i for i in basic_ingredients if not 'inch' in i])
+    
+    # if an ingredient is too long, keep the first two and last word
+    additions = set()
+    for b in basic_ingredients:
+        split = b.split()
+        if len(split) > 2:
+            additions.add(split[0] + " " + split[1])
+            additions.add(split[-2] + " " + split[-1])
+    basic_ingredients = set([b for b in basic_ingredients if len(b.split()) <= 2])
+    for a in additions:
+        basic_ingredients.add(a)
+        
     # we remove the longer versions of ingredients already appearing in the database
     def find_longer_duplicate(s : set):
         for i in s:
@@ -105,21 +120,6 @@ def save_basic_ingredients():
             remove_longer_duplicates(s)
     
     remove_longer_duplicates(basic_ingredients)
-    
-    # remove ingredients which contain ":" or " inch" because they're parsing artifacts
-    basic_ingredients = set([i for i in basic_ingredients if not ':' in i])
-    basic_ingredients = set([i for i in basic_ingredients if not 'inch' in i])
-    
-    # if an ingredient is too long, keep only the first two and last two words
-    additions = set()
-    for b in basic_ingredients:
-        split = b.split()
-        if len(split) > 2:
-            additions.add(split[0] + " " + split[1])
-            additions.add(split[-2] + " " + split[-1])
-    basic_ingredients = set([b for b in basic_ingredients if len(b.split()) <= 2])
-    for a in additions:
-        basic_ingredients.add(a)
 
     # remove ingredients which don't appear at least three times among the recipes 
     appearance_rate = dict()

@@ -3,7 +3,9 @@ import json
 import pickle
 from operator import itemgetter
 
-from allrecipe_db import AllRecipe, load_allrecipe_database, load_basic_ingredients, basic_ingredients_in_recipe
+from allrecipe_db import AllRecipe, load_allrecipe_database, basic_ingredients_in_recipe
+from basic_ingredients import load_basic_ingredients
+from guru import Guru
 from recipe import Recipe
 from config import get_config
 from ingredient import Ingredient
@@ -138,9 +140,36 @@ def compute_best_replacements():
         result[b] = simplified_result
     return result
 
+def compute_typed_best_replacements(): 
+    g = Guru() 
+    br = compute_best_replacements()
+    basic_ingredients = load_basic_ingredients()
+    
+    result = dict()
+    ing_type = dict()
+    for i in basic_ingredients:
+        result[i] = []
+        ing_type[i] = g.getIngredientBaseType(i)
+        
+    for i in basic_ingredients:
+        if ing_type[i] != None:
+            def matching_type(s : str):
+                if ing_type[i] == 'meat' or ing_type[i] == 'vegprotein':
+                    return s == 'meat' or s == 'vegprotein'
+                else:
+                    return s == ing_type[i]
+            result[i] = [j for j in br[i] if matching_type(ing_type[j])]
+        else:
+            result[i] = br[i]
+    return result
+    
 def load_best_replacements_table():
     with open(os.path.join(config['ALLRECIPE_DATA'], config['REPLACEMENT_TABLE']),'r') as br_file:
         return json.load(br_file)
+    
+def load_typed_best_replacements_table():
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['TYPED_REPLACEMENT_TABLE']),'r') as tbr_file:
+        return json.load(tbr_file)
 
 def create_datafiles():
     sc = compute_similarity_coefficients()
@@ -154,6 +183,10 @@ def create_datafiles():
     br = compute_best_replacements()
     with open(os.path.join(config['ALLRECIPE_DATA'], config['REPLACEMENT_TABLE']),'w') as br_file:
         json.dump(br, br_file)
+        
+    tbr = compute_typed_best_replacements()
+    with open(os.path.join(config['ALLRECIPE_DATA'], config['TYPED_REPLACEMENT_TABLE']),'w') as tbr_file:
+        json.dump(tbr, tbr_file)
         
 if __name__ == "__main__":
     create_datafiles()
