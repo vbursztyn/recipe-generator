@@ -72,12 +72,11 @@ class Ingredient(object):
         return output
 
     def __mul__(self, x):
-        if not isinstance(x, (int, float)):
-            raise Exception("Multiplying by a non-number when changing an ingredient amount? That's not how you do math!")
-        newIngredient = deepcopy(self)
         if isinstance(x, (int, float)) and self.convertibleQuantity:
+            newIngredient = deepcopy(self)
             newIngredient.quantity = self.quantity * x
-        return newIngredient
+            return newIngredient
+        return self
 
     __rmul__ = __mul__
 

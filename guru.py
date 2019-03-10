@@ -96,9 +96,6 @@ class Guru(object):
             # we've got nothing?
             return None
 
-
-# EVERYTHING BELOW HERE IS 100% UP FOR GRABS AND ANY/ALL CHANGES SHOULD BE SAFE/NOT INTERFERE WITH ANYTHING ABOVE
-
     #
     # MAIN TRANSFORMER METHOD
     #
@@ -109,20 +106,25 @@ class Guru(object):
             # do it by subcomponent
             allNewIngs = []
             for subc in newRecipe.subcomponents:
-                swappedIngs, addedIngs = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType)
-                newRecipe.ingredientsBySubcomponent[subc] = swappedIngs+addedIngs
+                newIngs = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType)
+                newRecipe.ingredientsBySubcomponent[subc] = newIngs
                 allNewIngs.append(subc)
-                allNewIngs.extend(swappedIngs+addedIngs)
+                allNewIngs.extend(newIngs)
             newRecipe.allIngredients = allNewIngs
         else:
             # do it all at once
-            swappedIngs, addedIngs = self.transformIngredients(newRecipe.allIngredients, transformType)
-            newRecipe.allIngredients = swappedIngs+addedIngs
+            newRecipe.allIngredients = self.transformIngredients(newRecipe.allIngredients, transformType)
 
         # okay, we've got new ingredients
         # TODO: change the instructions based on the ingredient shift
         # NOTE: anything in newRecipe.allIngredients or newRecipe.ingredientsBySubcomponent will have either
         # self.altered = True or self.addedByTransform = True if it was changed/added during transform
+
+        # THOUGHT: DEDUPE!
+        # Example: we might have added water to a recipe with water already in it and need to combine those things
+        # However, we only want to do this if they appear in the same step (like broth (now water) + water in a soup base)
+        # TODO
+
         return newRecipe
 
     #
@@ -165,21 +167,26 @@ class Guru(object):
             # if replaceCount == 0 and type is vegToMeat, add meat to addedIngs
             # TODO
 
-            # if replaceCount == 0 and type is toUnhealthy, double unhealthy ingredients: salt, sugar, baseType oil
-            # TODO
-
-            # if replaceCount == 0 and type is toHealthy, 2/3 unhealthy ingredients: salt, sugar, others?
-            # TODO
-
             # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices to addedIngs
             # TODO
-
             pass
 
+        if type in ["toHealthy", "toUnhealthy"]:
+            # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
+            # if type is toUnhealthy, double unhealthy ingredients/baseTypes
+            # see lists in keywords/transforms.py
+            modifier = 0.5 if type == "toHealthy" else 2
+            for i, ing in enumerate(newIngList):
+                if ing.name in TRANSFORMS["unhealthyIngredients"] or ing.baseType in TRANSFORMS["unhealthyBaseTypes"]:
+                    newIngList[i] = ing * modifier
+
         for ai in addedIngs:
+            # flag the things that are being added as such
             ai.addedByTransform = True
 
-        return newIngList, addedIngs
+        outputIngs = newIngList + addedIngs
+
+        return outputIngs
 
     def ingredientTransformer(self, ingredient, type):
         # NOTE: CURRENTLY RETURNS A STRING NAME OF INGREDIENT TO MATCH SIGNATURE METHOD OF OTHER TRANSFORMERS

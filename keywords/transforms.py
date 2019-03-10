@@ -1,5 +1,10 @@
 TRANSFORMS = {}
 
+# THESE FIRST TWO ARE LISTS USED BY INGREDIENT TRANSFORMER WHEN DECIDING WHAT TO DOUBLE OR HALVE FOR toHealthy/toUnhealthy
+# Please add whatever makes sense...
+TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream"]
+TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
+
 TRANSFORMS["meatToVeg"] = {
     "generic": ["tofu", "tempeh", "seitan"],
     "chicken": ["tofu", "tempeh", "seitan"],
