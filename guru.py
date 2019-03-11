@@ -102,18 +102,22 @@ class Guru(object):
 
     def transformRecipeStyle(self, recipe, transformType):
         newRecipe = deepcopy(recipe)
+
+        # for tracking changes and printing them at the end, just append new statements to this list:
+        changeLog = []
+
         if newRecipe.subcomponents:
             # do it by subcomponent
             allNewIngs = []
             for subc in newRecipe.subcomponents:
-                newIngs = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType)
+                newIngs, changeLog = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType, changeLog)
                 newRecipe.ingredientsBySubcomponent[subc] = newIngs
                 allNewIngs.append(subc)
                 allNewIngs.extend(newIngs)
             newRecipe.allIngredients = allNewIngs
         else:
             # do it all at once
-            newRecipe.allIngredients = self.transformIngredients(newRecipe.allIngredients, transformType)
+            newRecipe.allIngredients, changeLog = self.transformIngredients(newRecipe.allIngredients, transformType, changeLog)
 
         # okay, we've got new ingredients
         # TODO: change the instructions based on the ingredient shift
@@ -125,13 +129,21 @@ class Guru(object):
         # However, we only want to do this if they appear in the same step (like broth (now water) + water in a soup base)
         # TODO
 
-        return newRecipe
+        changeStatement = "\n=============\n==CHANGELOG==\n"
+        if changeLog:
+            changesList = "\n - ".join(changeLog)
+            changeStatement += "Based on the requirements, I've made the following updates: \n - " + changesList
+        else:
+            changeStatement += "Given what you asked for, this recipe already seems pretty good to go!"
+        changeStatement += "\n=============\n"
+
+        return newRecipe, changeStatement
 
     #
     # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
     #
 
-    def transformIngredients(self, allIngredients, type):
+    def transformIngredients(self, allIngredients, type, changeLog=[]):
         newIngList = []
         addedIngs = []
         replacedIngs = [] # for dev bookkeeping
@@ -139,13 +151,13 @@ class Guru(object):
         for ing in allIngredients:
             # get the hardcoded cases first, if possible
             swappedIng = self.ingredientTransformer(ing, type)
-
+            reason = None
             # special cases for Victor's methods
             # call these second for anything we don't have hard-coded cases for
             if not swappedIng and type == "toHealthy":
-                swappedIng = NutritionalTransformation().find_healthier_ingredients(ing)
+                swappedIng, reason = NutritionalTransformation().find_healthier_ingredients(ing)
             elif not swappedIng and type == "toUnhealthy":
-                swappedIng = NutritionalTransformation().find_trashier_ingredients(ing)
+                swappedIng, reason = NutritionalTransformation().find_trashier_ingredients(ing)
 
             if swappedIng:
                 replaceCount += 1
@@ -157,6 +169,10 @@ class Guru(object):
                 # TODO: update anything else?
                 newIngList.append(replacerIng)
                 replacedIngs.append(replacerIng)
+                changedStatement = "Replaced "+str(ing.name)+" with "+str(replacerIng.name)
+                if reason:
+                    changedStatement += " ("+str(reason)+")"
+                changeLog.append(changedStatement)
             else:
                 # no replacement found...add the old ing back to the new list
                 newIngList.append(ing)
@@ -166,6 +182,7 @@ class Guru(object):
             # special cases!
             # if replaceCount == 0 and type is vegToMeat, add meat to addedIngs
             # TODO
+            # REMEMBER TO USE: changeLog.append("Added "+str(ing.name))
 
             # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices to addedIngs
             # TODO
@@ -176,17 +193,18 @@ class Guru(object):
             # if type is toUnhealthy, double unhealthy ingredients/baseTypes
             # see lists in keywords/transforms.py
             modifier = 0.5 if type == "toHealthy" else 2
+            modifierKeyword = "Halved" if type == "toHealthy" else "Doubled"
             for i, ing in enumerate(newIngList):
                 if ing.name in TRANSFORMS["unhealthyIngredients"] or ing.baseType in TRANSFORMS["unhealthyBaseTypes"]:
                     newIngList[i] = ing * modifier
-
+                    changeLog.append(modifierKeyword+" the "+str(ing.name))
         for ai in addedIngs:
             # flag the things that are being added as such
             ai.addedByTransform = True
 
         outputIngs = newIngList + addedIngs
 
-        return outputIngs
+        return outputIngs, changeLog
 
     def ingredientTransformer(self, ingredient, type):
         # NOTE: CURRENTLY RETURNS A STRING NAME OF INGREDIENT TO MATCH SIGNATURE METHOD OF OTHER TRANSFORMERS

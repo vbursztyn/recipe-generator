@@ -47,7 +47,7 @@ class Recipe(object):
     def __str__(self):
         # this is certainly hacky, but it seemed easier/faster to just nest prints
         # (given the subcomponents) than build a payload to return
-        print("\n\n============")
+        print("============")
         print(self.rawRecipe["name"].upper())
         print("\n[INGREDIENTS]")
         self.print_ingredients()
@@ -55,7 +55,7 @@ class Recipe(object):
         RecipeStep.print_steps(self.steps)
         # self.print_nutrition_info()
         print("============\n\n")
-        return "LOOKS DELICIOUS!"
+        return("\n")
 
     def print_ingredients(self):
         # are there subcomponents to worry about?

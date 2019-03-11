@@ -96,7 +96,7 @@ class NutritionalTransformation(object):
         if matches:
             match = matches[0]
         else:
-            return None
+            return None, None
 
         similar_to_match = self.similar_ingredients[match]
         # Make it: HEALTHIER
@@ -107,10 +107,13 @@ class NutritionalTransformation(object):
             substitutions = self.get_substitutions(match, similar_to_match, bad_nutrient,\
                                                    healthier=False)
         if not substitutions:
-            return None
+            return None, None
 
         # just going to go with the first in the list as the option for now
-        return substitutions[0][0].replace('_',' ')
+        sub = substitutions[0][0].replace('_',' ')
+        reasons = self.caption_substitutions([substitutions[0]], bad_nutrient)
+        reason = reasons[0] if reasons else None
+        return sub, reason
 
 
     def find_healthier_ingredients(self, ingredient):
