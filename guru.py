@@ -26,7 +26,7 @@ class Guru(object):
     Do any heavy loading here (regex, pandas, etc) so it gets done once and passed around.'''
     def __init__(self):
         self.config = get_config()
-        self.knownCuisines = ["italian", "mexican", "japanese"] # TODO: KEEP THIS IN SYNC WITH keywords/transforms.py
+        self.knownCuisines = ["italian", "mexican", "japanese", "korean", "polish"] # IN SYNC WITH keywords/transforms.py
         self.setUpIngredients()
 
     def setUpIngredients(self):
@@ -50,13 +50,16 @@ class Guru(object):
         self.cheeses["category"] = "cheese"
         self.staples = pd.read_csv("keywords/staples.csv")
         self.staples["category"] = "staples"
+        # This is paste as in miso paste, not as in misspelled pasta
+        self.paste = pd.read_csv("keywords/paste.csv")
+        self.paste["category"] = "paste"
         self.alcohol = pd.read_csv("keywords/alcohol.csv")
         self.alcohol["category"] = "alcohol"
         self.pasta = pd.read_csv("keywords/pasta.csv")
         self.pasta["category"] = "pasta"
         self.eggDairy = pd.read_csv("keywords/eggdairy.csv")
         self.eggDairy["category"] = "eggdairy"
-        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.staples, self.alcohol, self.pasta, self.eggDairy], sort=True)
+        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.staples, self.paste, self.alcohol, self.pasta, self.eggDairy], sort=True)
         self.knownIngredients["name"] = self.knownIngredients["name"].str.lower()
 
     def getIngredientBaseType(self, ingredient):

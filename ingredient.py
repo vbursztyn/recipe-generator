@@ -17,11 +17,11 @@ class Ingredient(object):
         self.quantityModifier = None
         self.knownHealthyModifiers = ["lean", "extra-lean", "extra lean", "lowfat", "low-fat", "low fat", "low-calorie", "low calorie", "diet"]
         self.healthyModifier = None
-        self.knownSizeModifiers = ["large", "medium", "med", "small", "good-sized", "whole", "half"]
+        self.knownSizeModifiers = ["large", "medium", "med", "small", "good-sized", "whole", "half", "halves"]
         self.sizeModifier = None
         self.knownFlavorModifiers = ["sweet", "hot", "tangy", "smoky", "spiced"]
         self.flavorModifier = None
-        self.knownTypeModifiers = ["dry", "ground", "flaked"]
+        self.knownTypeModifiers = ["dry", "dried", "ground", "crushed", "flaked", "frozen", "fresh"]
         self.typeModifier = None
         self.convertibleQuantity = False
         self.unit = None
