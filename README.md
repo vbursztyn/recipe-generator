@@ -1,5 +1,7 @@
 # recipe-generator
-Project 2 for Northwestern's EECS 337.
+Project 2 for Northwestern's EECS 337.  
+Developed by: Victor Bursztyn, Piotr Pstragowski, Mike D'Arcy, Andrew Paley  
+Github: https://github.com/vbursztyn/recipe-generator
 
 Basic setup:
 

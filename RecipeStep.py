@@ -2,14 +2,8 @@ import nltk
 from keywords.cooking_verbs import COOKING_VERBS
 from keywords.units import UNITS
 import copy
+import re
 
-class RecipeStep:
-    def __init__(self):
-        self.raw_step = ""
-        self.tokens = []
-        self.action = ""
-        self.action_position = (-1, -1)
-        self.ingredients = []
 
 def intervals_overlap(interval1, interval2):
     """Assumes each interval is already sorted. This function also assumes
@@ -19,12 +13,148 @@ def intervals_overlap(interval1, interval2):
         return interval2[0] < interval1[1]
     return interval1[0] < interval2[1]
 
+def unitnumstr2float(unitnumstr):
+    pieces = unitnumstr.partition(' ')
+    total = 0
+    for piece in pieces:
+        if re.match(r'^\d+([.]\d+)?$', piece):
+            total += float(piece)
+        elif re.match(r'^\d+/\d+$', piece):
+            subpieces = piece.partition('/')
+            total += float(subpieces[0]) / float(subpieces[2])
+        else:
+            return float('NaN')
+    return total
+
+def expand_str_placeholders(string, placeholders_dict, max_depth=None):
+    if max_depth == 0:
+        return string
+
+    tokens = string.split(' ')
+    for i in range(len(tokens)):
+        if tokens[i] in placeholders_dict:
+            tokens[i] = expand_str_placeholders(str(placeholders_dict[tokens[i]]), placeholders_dict, max_depth=(max_depth-1 if max_depth else None))
+
+    return ' '.join(tokens)
+
+def print_steps(steps):
+    i = 1
+    for step in steps:
+        tokens = step._processed_text.split(' ')
+        for j in range(len(tokens)):
+            match = re.match(r'^__([^_]+)_\d+__$', tokens[j])
+            if match:
+                fullstr = expand_str_placeholders(tokens[j], step.placeholders)
+                if match.group(1) == 'ingredient':
+                    fullstr = '[' + fullstr + ']'
+                elif match.group(1) == 'cookverb':
+                    fullstr = '<' + fullstr + '>'
+                tokens[j] = fullstr
+        print('Step {}: {}'.format(i, ' '.join(tokens)))
+        i += 1
+
+def make_step(action, ingredients, until=None, fortime=None):
+    step = RecipeStep()
+    action_placid = step.new_placeholder_id(base_name='cookverb')
+    step.placeholders[action_placid] = Placeholder(action)
+    ingredient_exs = []
+    for ingr in ingredients:
+        ingr_ex = {
+            'ingredient': ingr,
+            'placeholder': step.new_placeholder_id(base_name='ingredient'),
+        }
+        ingredient_exs.append(ingr_ex)
+        step.placeholders[ingr_ex['placeholder']] = Placeholder(ingr.name, meta=ingr_ex)
+
+    ingrlist = ' , '.join([x['placeholder'] for x in ingredient_exs[:-1]])
+    if len(ingredient_exs) > 1:
+        ingrlist += ' and '
+    ingrlist += ingredient_exs[-1]['placeholder']
+
+    step._processed_text = action_placid + ' ' + ingrlist
+
+    if until:
+        # Assuming "until" is a string representing a stop condition
+        until_placid = step.new_placeholder_id(base_name='until')
+        step.placeholders[until_placid] = Placeholder('until ' + until)
+        step._processed_text += ' ' + until_placid
+
+    if fortime:
+        # Assuming "fortime" is a string representing an amount of time
+        fortime_placid = step.new_placeholder_id(base_name='fortime')
+        step.placeholders[fortime_placid] = Placeholder('for ' + fortime)
+        step._processed_text += ' ' + fortime_placid
+
+    step._processed_text += ' ' + '.'
+    return step
+
+def modify_steps(steps, ingr_subs):
+    for step in steps:
+        step.sub_ingredients(ingr_subs)
+
+
+class Placeholder:
+    def __init__(self, string, meta=None):
+        self.string = string
+        self.meta = meta
+
+    def __str__(self):
+        return self.string
+
+
+class RecipeStep:
+    def __init__(self):
+        self.raw_step = ""
+        self.raw_tokens = []
+        self.ingredients = []
+
+        self._placeholder_counter = 0
+        self.placeholders = dict()
+
+        self._processed_text = ''
+
+    def new_placeholder_id(self, base_name='placeholder'):
+        self._placeholder_counter += 1
+        return ('__' + base_name + '_' + str(self._placeholder_counter) + '__')
+
+    def _sub_ingredient(self, old_ingr_ex, new_ingr):
+        new_ingr_ex = {
+            'ingredient': new_ingr,
+            'placeholder': self.new_placeholder_id(base_name='ingredient'),
+        }
+        new_plac = Placeholder(new_ingr.name, meta=new_ingr_ex)
+        self.placeholders[new_ingr_ex['placeholder']] = new_plac
+        tokens = self._processed_text.split(' ')
+        for i, tok in enumerate(tokens):
+            if tok == old_ingr_ex['placeholder']:
+                tokens[i] = new_ingr_ex['placeholder']
+        self._processed_text = ' '.join(tokens)
+
+    def sub_ingredients(self, ingr_subs):
+        """Note: ingr_subs should be a dict like [old_ingr1_statement: new_ingr1,
+        ...]. This method substitutes by checking if an old_ingr_statement
+        matches that of an existing ingredient in a step."""
+
+        for i in range(len(self.ingredients)):
+            ingr1 = self.ingredients[i]
+            if ingr1['ingredient'].statement in ingr_subs:
+                self._sub_ingredient(ingr1, ingr_subs[ingr1['ingredient'].statement])
+
+
 class RecipeDirectionsParser:
     def __init__(self, raw_directions, ingredients):
         self.raw_directions = raw_directions
         self.ingredients = ingredients
         self.steps = []
-        self.placeholders = dict()
+
+        self._COOKING_VERB_REGEX = r'\b(' + r'|'.join([re.escape(verb) for verb in COOKING_VERBS]) + r')\b'
+        self._UNIT_NUMBER_REGEX = r'\b((\d+ )?\d+([/.]\d+)?)\b'
+        self._UNIT_NAME_REGEX = r'\b(' + r'|'.join([re.escape(unit) for unit in UNITS]) + r')\b'
+        self._UNIT_REGEX = r'\b__unitnumber_\d+__ ' + self._UNIT_NAME_REGEX
+        self._TEMPERATURE_REGEX = r'\b__unitnumber_\d+__ degrees [fc]\b'
+        self._TIME_REGEX = r'\b__unitnumber_\d+__ (minutes?|hours?)\b'
+        self._UNTIL_REGEX = r'\buntil \w+( \w+)* [,.]'
+        self._FOR_TIME_REGEX = r'\bfor (\w+ )?__time_\d+__'
 
         self.raw_steps = self._split_steps(raw_directions)
         for step in self.raw_steps:
@@ -33,15 +163,7 @@ class RecipeDirectionsParser:
     def get_steps(self):
         return self.steps
 
-    def _parse_cooking_action(self, direction_tokens):
-        # Take the first word that could be a valid step
-        # TODO: Right now we'll miss compounds like "roll out"; needs fixing
-        for i in range(len(direction_tokens)):
-            if direction_tokens[i] in COOKING_VERBS:
-                return direction_tokens[i], (i, i+1)
-        return None, (-1, -1)
-
-    def _disambiguate_overlapping_ingredients(self, direction_tokens, ingr_extras):
+    def _disambiguate_overlapping_ingredients(self, step, direction_tokens, ingr_extras):
         # TODO: Nesting is not deep enough here. Needs more levels of indentation
         for i, ingr1 in enumerate(ingr_extras):
             for j, ingr2 in enumerate(ingr_extras[(i+1):]):
@@ -54,18 +176,45 @@ class RecipeDirectionsParser:
                                 ingr1['positions'].remove(interval1)
                             elif intervalsize2 < intervalsize1:
                                 ingr2['positions'].remove(interval2)
+                            elif 0 < interval1[0] and re.match(r'^__unit_\d+__$', direction_tokens[interval1[0]-1]):
+                                # TODO: In theory we should check the unit in
+                                # addition to the value (e.g., cups are bigger
+                                # than tablespoons).
+                                expanded_plac = str(step.placeholders[direction_tokens[interval1[0]-1]])
+                                number_str = re.search(r'^__unitnumber_\d+__\b', expanded_plac)
+                                if number_str:
+                                    number = unitnumstr2float(str(step.placeholders[expanded_plac[number_str.start():number_str.end()]]))
+                                    if abs(number - ingr1['ingredient'].quantity) >= abs(number - ingr2['ingredient'].quantity):
+                                        ingr1['positions'].remove(interval1)
+                                        return
+                                # When all else fails
+                                ingr2['positions'].remove(interval2)
                             else:
-                                # TODO: Check for a size keyword in front of the
-                                # ingredient and choose intelligently. Currently we
-                                # just default to removing ingr2
+                                # When all else fails
                                 ingr2['positions'].remove(interval2)
 
-    def _parse_step_ingredients(self, direction_tokens):
+    def _strsub_regex2placeholders(self, step, sub_regex, base_name='regex'):
+        """This function modifies step._processed_text"""
+
+        new_str = ''
+        last_ind = 0
+        for match in re.finditer(sub_regex, step._processed_text):
+            new_str += step._processed_text[last_ind:match.start()]
+            newplac = step.new_placeholder_id(base_name=base_name)
+            step.placeholders[newplac] = Placeholder(step._processed_text[match.start():match.end()])
+            new_str += newplac
+            last_ind = match.end()
+        new_str += step._processed_text[last_ind:]
+        step._processed_text = new_str
+
+    def _parse_step_ingredients(self, step):
+        direction_tokens = step._processed_text.split(' ')
         ingr_extras = []
         for ingr in self.ingredients:
-            namelist = ingr.name.lower().split(' ')
+            namelist = nltk.word_tokenize(ingr.name.lower())
             ingr_extras.append({
                 'ingredient': ingr,
+                'placeholder': step.new_placeholder_id(base_name='ingredient'),
                 'positions': [],
                 'namelist': tuple(namelist),
                 'nameset': set(namelist)
@@ -96,21 +245,39 @@ class RecipeDirectionsParser:
             del ingr['nameset']
 
 
-        self._disambiguate_overlapping_ingredients(direction_tokens, ingr_extras)
+        self._disambiguate_overlapping_ingredients(step, direction_tokens, ingr_extras)
 
-        return ingr_extras
+        sub_positions = []
+        for ingr in ingr_extras:
+            for pos in ingr['positions']:
+                sub_positions.append((pos, ingr))
+            del ingr['positions']
+        sub_positions = sorted(sub_positions, key=lambda x: x[0], reverse=True)
+        for sub in sub_positions:
+            pos = sub[0]
+            ingr = sub[1]
+            step.placeholders[ingr['placeholder']] = Placeholder(' '.join(direction_tokens[pos[0]:pos[1]]), meta=ingr)
+            direction_tokens[pos[0]:pos[1]] = [ingr['placeholder']]
 
-    def _sub_units2placeholders(self, raw_direction):
-        # TODO: Implement this method
-        return raw_direction
+        step._processed_text = ' '.join(direction_tokens)
+
+        step.ingredients = ingr_extras
 
     def direction_to_recipe_step(self, direction):
         direction = direction.lower()
         step = RecipeStep()
-        step.tokens = nltk.word_tokenize(direction.lower())
         step.raw_step = direction
-        step.action, step.action_position = self._parse_cooking_action(step.tokens)
-        step.ingredients = self._parse_step_ingredients(step.tokens)
+        step.raw_tokens = nltk.word_tokenize(direction.lower())
+
+        step._processed_text = ' '.join(step.raw_tokens)
+        self._strsub_regex2placeholders(step, self._COOKING_VERB_REGEX, base_name='cookverb')
+        self._strsub_regex2placeholders(step, self._UNIT_NUMBER_REGEX, base_name='unitnumber')
+        self._strsub_regex2placeholders(step, self._UNIT_REGEX, base_name='unit')
+        self._strsub_regex2placeholders(step, self._TEMPERATURE_REGEX, base_name='temperature')
+        self._strsub_regex2placeholders(step, self._TIME_REGEX, base_name='time')
+        self._strsub_regex2placeholders(step, self._UNTIL_REGEX, base_name='until')
+        self._strsub_regex2placeholders(step, self._FOR_TIME_REGEX, base_name='fortime')
+        self._parse_step_ingredients(step)
         return step
 
     def _split_steps(self, directions):
@@ -122,47 +289,4 @@ class RecipeDirectionsParser:
                 all_steps.extend(self._split_steps(substep))
             return all_steps
         return nltk.sent_tokenize(directions)
-
-def modify_steps(steps, ingr_subs):
-    """Note: ingr_subs should be a list of pairs like [(old_ingr1, new_ingr1),
-    ...]. This method substitutes by checking if the "statement" field of an
-    old_ingr matches that of an existing ingredient in a step."""
-
-    new_steps = copy.deepcopy(steps)
-
-    sub_positions = []
-
-    for step_num, step in enumerate(new_steps):
-        for i in range(len(step.ingredients)):
-            ingr1 = step.ingredients[i]
-            for old_ingr2, new_ingr2 in ingr_subs:
-                if ingr1['ingredient'].statement == old_ingr2.statement:
-                    step.ingredients[i]['ingredient'] = new_ingr2
-                    for j, pos in enumerate(step.ingredients[i]['positions']):
-                        sub_positions.append((pos, step_num, i, j, new_ingr2))
-                    break
-    sub_positions = sorted(sub_positions, key=lambda x: x[0], reverse=True)
-    for sub in sub_positions:
-        pos = sub[0]
-        step_num = sub[1]
-        ingr_num = sub[2]
-        pos_num = sub[3]
-        ingr = sub[4]
-        new_steps[step_num].tokens[pos[0]:pos[1]] = ingr.name.split(' ')
-        new_steps[step_num].ingredients[ingr_num]['positions'][pos_num] = (pos[0], pos[0]+len(ingr.name.split(' ')))
-    return new_steps
-
-def print_steps(steps):
-    i = 1
-    for step in steps:
-        tokens = copy.deepcopy(step.tokens)
-        for ingr in step.ingredients:
-            for pos in ingr['positions']:
-                tokens[pos[0]] = '[' + tokens[pos[0]]
-                tokens[pos[1]-1] = tokens[pos[1]-1] + ']'
-        if step.action is not None:
-            tokens[step.action_position[0]] = '<' + tokens[step.action_position[0]]
-            tokens[step.action_position[1]-1] = tokens[step.action_position[1]-1] + '>'
-        print('Step {}: {}'.format(i, ' '.join(tokens)))
-        i += 1
 

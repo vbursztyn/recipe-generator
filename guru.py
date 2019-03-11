@@ -26,7 +26,7 @@ class Guru(object):
     Do any heavy loading here (regex, pandas, etc) so it gets done once and passed around.'''
     def __init__(self):
         self.config = get_config()
-        self.knownCuisines = ["italian", "mexican", "japanese"] # TODO: KEEP THIS IN SYNC WITH keywords/transforms.py
+        self.knownCuisines = ["italian", "mexican", "japanese", "korean", "polish"] # IN SYNC WITH keywords/transforms.py
         self.setUpIngredients()
 
     def setUpIngredients(self):
@@ -48,9 +48,18 @@ class Guru(object):
         self.fruits["category"] = "fruit"
         self.cheeses = pd.read_csv("keywords/cheeses.csv")
         self.cheeses["category"] = "cheese"
+        self.staples = pd.read_csv("keywords/staples.csv")
+        self.staples["category"] = "staples"
+        # This is paste as in miso paste, not as in misspelled pasta
+        self.paste = pd.read_csv("keywords/paste.csv")
+        self.paste["category"] = "paste"
+        self.alcohol = pd.read_csv("keywords/alcohol.csv")
+        self.alcohol["category"] = "alcohol"
+        self.pasta = pd.read_csv("keywords/pasta.csv")
+        self.pasta["category"] = "pasta"
         self.eggDairy = pd.read_csv("keywords/eggdairy.csv")
         self.eggDairy["category"] = "eggdairy"
-        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.eggDairy], sort=True)
+        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.staples, self.paste, self.alcohol, self.pasta, self.eggDairy], sort=True)
         self.knownIngredients["name"] = self.knownIngredients["name"].str.lower()
 
     def getIngredientBaseType(self, ingredient):
@@ -61,6 +70,10 @@ class Guru(object):
             return "cheese"
         if "sauce" in ingredient:
             return "sauce"
+        if "bread" in ingredient:
+            return "staples"
+        if "bell pepper" in ingredient:
+            return "vegetable"
         
         # if it's not that easy, we look for the best match
         needle = ingredient.lower()
@@ -227,11 +240,15 @@ class Guru(object):
         if type not in TRANSFORMS:
             return None
 
-        if ingredient.name in TRANSFORMS[type].keys():
-            # we're basically done here
-            optionCount = len(TRANSFORMS[type][ingredient.name])
+        # if ingredient.name in TRANSFORMS[type].keys() 
+        # first check if there's a fitting key in the database
+        fitting_keys = [k for k in TRANSFORMS[type].keys() if k in ingredient.name]
+        if fitting_keys != []:
+            keys_length = [len(k.split()) for k in fitting_keys]
+            key = fitting_keys[keys_length.index(max(keys_length))] 
+            optionCount = len(TRANSFORMS[type][key])
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
-            return TRANSFORMS[type][ingredient.name][optSelection]
+            return TRANSFORMS[type][key][optSelection]
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
         if type == "meatToVeg" and ingredient.baseType == "meat":
