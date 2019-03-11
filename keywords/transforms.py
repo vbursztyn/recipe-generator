@@ -524,8 +524,8 @@ TRANSFORMS["toUnhealthy"] = {
     "agave":["white sugar"],
     "tomato":["ketchup"],
     "chicken":["rib-eye steak"],
-    "salmon":["immitation crab meat"],
-    "tuna":["immitation crab meat"],
-    "cod":["immitation crab meat"],
-    "whitefish":["immitation crab meat"]
+    "salmon":["imitation crab meat"],
+    "tuna":["imitation crab meat"],
+    "cod":["imitation crab meat"],
+    "whitefish":["imitation crab meat"]
 }
