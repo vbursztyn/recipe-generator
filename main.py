@@ -11,7 +11,6 @@ class InteractionManager(object):
             ("Make it healthier", self.makeHealthier),
             ("Make it less healthy (but why?)", self.makeLessHealthy),
             ("Switch it to a different cuisine", self.cuisineSwitcherOptions),
-            ("Mix it up! (aka: make a reviewer-suggested alteration)", self.mixItUp),
             ("Nevermind, let's start over with a different recipe.", self.recipePrompt)
         ]
         # and a list of our supported cuisines...edit at will!
