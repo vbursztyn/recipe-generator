@@ -70,6 +70,10 @@ class Guru(object):
             return "cheese"
         if "sauce" in ingredient:
             return "sauce"
+        if "bread" in ingredient:
+            return "staples"
+        if "bell pepper" in ingredient:
+            return "vegetable"
         
         # if it's not that easy, we look for the best match
         needle = ingredient.lower()
@@ -236,11 +240,15 @@ class Guru(object):
         if type not in TRANSFORMS:
             return None
 
-        if ingredient.name in TRANSFORMS[type].keys():
-            # we're basically done here
-            optionCount = len(TRANSFORMS[type][ingredient.name])
+        # if ingredient.name in TRANSFORMS[type].keys() 
+        # first check if there's a fitting key in the database
+        fitting_keys = [k for k in TRANSFORMS[type].keys() if k in ingredient.name]
+        if fitting_keys != []:
+            keys_length = [len(k.split()) for k in fitting_keys]
+            key = fitting_keys[keys_length.index(max(keys_length))] 
+            optionCount = len(TRANSFORMS[type][key])
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
-            return TRANSFORMS[type][ingredient.name][optSelection]
+            return TRANSFORMS[type][key][optSelection]
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
         if type == "meatToVeg" and ingredient.baseType == "meat":
