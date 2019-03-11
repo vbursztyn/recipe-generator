@@ -498,7 +498,11 @@ TRANSFORMS["toHealthy"] = {
     "canola oil": ["olive oil", "coconut oil"],
     "vegetable broth": ["water"],
     "beef broth": ["water"],
-    "chicken broth": ["water"]
+    "chicken broth": ["water"],
+    "sugar": ["honey","agave"], # Victor's suggestions
+    "ketchup": ["fresh tomato sauce"],
+    "salmon": ["wild salmon"],
+    "chicken": ["lean turkey"]
 }
 
 TRANSFORMS["toUnhealthy"] = {
@@ -515,5 +519,13 @@ TRANSFORMS["toUnhealthy"] = {
     "coconut oil": ["canola oil"],
     "cooking spray": ["lard"],
     "black beans": ["pinto beans with lard"],
-    "extra virgin olive oil": ["canola oil"]
+    "extra virgin olive oil": ["canola oil"],
+    "honey":["white sugar"], # Victor's suggestions
+    "agave":["white sugar"],
+    "tomato":["ketchup"],
+    "chicken":["rib-eye steak"],
+    "salmon":["immitation crab meat"],
+    "tuna":["immitation crab meat"],
+    "cod":["immitation crab meat"],
+    "whitefish":["immitation crab meat"]
 }

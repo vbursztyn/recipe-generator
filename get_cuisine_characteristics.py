@@ -62,7 +62,7 @@ if __name__ == '__main__':
 	for cuisine in cuisine_keywords:
 	    cuisine_recipes[cuisine] = []
 	    for kw in cuisine_keywords[cuisine]:
-	        cuisine_recipes[cuisine] += RecipeFetcher().search_recipes(kw)
+	        cuisine_recipes[cuisine] += RecipeFetcher().search_recipes(kw, max_amount=100)
 	        random_sleep(config['SAFE_REQUEST_INTERVAL'])
 
 
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 	    for recipe in cuisine_recipes[cuisine]:
 	        raw_recipe = RecipeFetcher().fetch_recipe(recipe, include_nutrients=False)
 	        ingredients = [ingredient.name.lower()\
-	                       for ingredient in Recipe(raw_recipe).ingredients]
+	                       for ingredient in Recipe(raw_recipe).allIngredients]
 	        cuisine_ingredients[cuisine]['top_ingredients'] += ingredients
 	        cuisine_ingredients[cuisine]['top_pairings'] += [pair for pair in\
 	                                                         combinations(ingredients, 2)]
@@ -89,10 +89,10 @@ if __name__ == '__main__':
 	    cuisine_characteristics[cuisine] = {}
 	    cuisine_characteristics[cuisine]['top_ingredients'] = [t for t in\
 	                                                           Counter(cuisine_ingredients[cuisine]['top_ingredients']).most_common()\
-	                                                           if t[1] > 3]
+	                                                           if t[1] >= 10]
 	    cuisine_characteristics[cuisine]['top_pairings'] = [t for t in\
 	                                                        Counter(cuisine_ingredients[cuisine]['top_pairings']).most_common()\
-	                                                        if t[1] > 3]
+	                                                        if t[1] >= 10]
 
 
 	pickle.dump(cuisine_characteristics,\

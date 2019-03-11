@@ -18,4 +18,4 @@ USDA_NUTRIENTS: 'Nutrients.csv'
 SIMILAR_INGREDIENTS: 'similar_ingredients.pickle'
 INGREDIENT_NUTRIENTS: 'ingredient_nutrients.pickle'
 CUISINE_CHARACTERISTICS: 'cuisine_characteristics.pickle'
-SAFE_REQUEST_INTERVAL: [15, 25]
+SAFE_REQUEST_INTERVAL: [10, 20]
