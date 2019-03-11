@@ -77,12 +77,12 @@ class NutritionalTransformation(object):
         for substitution in substitutions:
             subst_name = substitution[0].replace('_',' ')
             if not substitution[1]:
-                captions.append('%s (has approx. 0%% of %s)' %(subst_name, bad_nutrient))
+                captions.append('%s has approx. 0%% of %s' %(subst_name, bad_nutrient))
             else:
                 if substitution[1] < 100.0:
-                    captions.append('%s (%.2f%% less %s)' %(subst_name, 100.0 - substitution[1], bad_nutrient))
+                    captions.append('%s %.2f%% less %s' %(subst_name, 100.0 - substitution[1], bad_nutrient))
                 else:
-                    captions.append('%s (%.2fx more %s)' %(subst_name, substitution[1] / 100.0, bad_nutrient))
+                    captions.append('%s %.2fx more %s' %(subst_name, substitution[1] / 100.0, bad_nutrient))
 
         return captions
 
