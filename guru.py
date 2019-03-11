@@ -9,6 +9,7 @@ from basic_ingredients import close_basic_ingredient
 from config import get_config
 from nutritional_transformation import NutritionalTransformation
 from keywords.transforms import TRANSFORMS
+import RecipeStep
 
 # note, some of the raw list ingredient data sources imported below
 # contain some elements from
@@ -145,6 +146,8 @@ class Guru(object):
         # TODO: change the instructions based on the ingredient shift
         # NOTE: anything in newRecipe.allIngredients or newRecipe.ingredientsBySubcomponent will have either
         # self.altered = True or self.addedByTransform = True if it was changed/added during transform
+        ingr_subs = {ingr.statement: ingr for ingr in newRecipe.allIngredients if ingr.altered}
+        RecipeStep.modify_steps(newRecipe.steps, ingr_subs)
 
         # THOUGHT: DEDUPE!
         # Example: we might have added water to a recipe with water already in it and need to combine those things
