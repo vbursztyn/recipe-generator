@@ -15,6 +15,5 @@ basic_ingredients = load_basic_ingredients()
 def close_basic_ingredient(s : str):
     for i in basic_ingredients:
         if i in s:
-            if len(i.split()) == 1:
-                return i
+            return i
     return None
