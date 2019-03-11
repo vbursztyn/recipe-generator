@@ -420,6 +420,7 @@ TRANSFORMS['mexican'] = {
  'almon': ['flank steak', 'chicken', 'turkey', 'shrimp'],
  'hot sauce': ['salsa', 'enchilada sauce', 'mayonnaise', 'ketchup'],
 # end of Piotr's automatically generated list 
+ 'bell pepper': ['chili beans', 'black olives', 'kernel corn', 'capers'],
 }
 
 TRANSFORMS["japanese"] = {
@@ -604,8 +605,9 @@ TRANSFORMS["japanese"] = {
  'orange': ['raisins', 'coconut'],
  'almon': ['dashi', 'round steak', 'ham', 'beef'],
  'hot sauce': ['teriyaki sauce', 'soy sauce', 'ketchup', 'vinegar'],
- 'cucumber': ['leeks', 'ginger']
+ 'cucumber': ['leeks', 'ginger'],
 # end of Piotr's automatically generated list 
+ 'bell pepper': ['leeks', 'ginger', 'cucumber', 'green chiles'],
 }
 
 TRANSFORMS["korean"] = {
@@ -781,7 +783,9 @@ TRANSFORMS["korean"] = {
  'orange': ['pear', 'sherry', 'lemon'],
  'almon': ['flank steak', 'tuna', 'dashi', 'round steak'],
  'hot sauce': ['soy sauce', 'ketchup', 'hoisin sauce', 'fish sauce'],
- 'cucumber': ['bean sprouts']
+ 'cucumber': ['bean sprouts'],
+ # end of automatically generated list
+ 'bell pepper': ['bean sprouts', 'cucumber', 'cauliflower', 'shallot'],
 }
 
 TRANSFORMS["polish"] = {
@@ -1005,7 +1009,9 @@ TRANSFORMS["polish"] = {
  'orange': ['raisins', 'banana', 'pear', 'lemon'],
  'almon': ['kielbasa', 'veal', 'turkey', 'pork'],
  'hot sauce': ['worcestershire sauce', 'salsa', 'ketchup', 'vinegar'],
- 'cucumber': ['cabbage', 'dill', 'leeks', 'pimento']
+ 'cucumber': ['cabbage', 'dill', 'leeks', 'pimento'],
+ # end of automatically generated list
+'bell pepper': ['cabbage', 'dill', 'leeks', 'pimento'],
 }
 
 TRANSFORMS["meatToVeg"] = {
