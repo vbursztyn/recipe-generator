@@ -26,7 +26,7 @@ class Guru(object):
     Do any heavy loading here (regex, pandas, etc) so it gets done once and passed around.'''
     def __init__(self):
         self.config = get_config()
-        self.knownCuisines = ["indian", "italian", "mexican"] # TODO: KEEP THIS IN SYNC WITH keywords/transforms.py
+        self.knownCuisines = ["italian", "mexican", "japanese"] # TODO: KEEP THIS IN SYNC WITH keywords/transforms.py
         self.setUpIngredients()
 
     def setUpIngredients(self):

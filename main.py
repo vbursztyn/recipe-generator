@@ -129,8 +129,8 @@ class InteractionManager(object):
             self.cuisineSwitcherOptions()
 
     def switchCuisineTo(self, cuisine):
-        self.recipe, changeStatement = self.guru.transformToCuisine(self.originalRecipe, cuisine)
         print("Aha, I like " + cuisine.capitalize() + " food, too!")
+        self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, cuisine)
         print(changeStatement)
         print(self.recipe)
         print("\n\n")

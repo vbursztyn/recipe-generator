@@ -7,7 +7,7 @@ transformer = []
 TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream"]
 TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
 
-TRANSFORMS["Italian"] = {
+TRANSFORMS["italian"] = {
 # beginning of Piotr's automatically generated list
  'bacon': ['beef', 'turkey', 'pancetta'],
  'lemon': ['orange', 'raisins'],
@@ -146,7 +146,7 @@ TRANSFORMS["Italian"] = {
  # end of Piotr's automatically generated list
  }
 
-TRANSFORMS['Mexican'] = { 
+TRANSFORMS['mexican'] = { 
 # beginning of Piotr's automatically generated list
  'bacon': ['chicken', 'turkey', 'flank steak'],
  'lemon': ['lime', 'avocado', 'strawberries'],
@@ -285,7 +285,7 @@ TRANSFORMS['Mexican'] = {
 # end of Piotr's automatically generated list 
 }
 
-TRANSFORMS["Japanese"] = {
+TRANSFORMS["japanese"] = {
 # beginning of Piotr's automatically generated list 
  'bacon': ['round steak', 'dashi', 'ham'],
  'lemon': ['coconut', 'orange', 'raisins'],
