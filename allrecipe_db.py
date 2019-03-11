@@ -116,7 +116,9 @@ def save_basic_ingredients():
                        'as needed', 'topping thawed', 'in puree', 'in half', 'room temperature', 'quick cooking', 'into wedges',
                        'tips discarded', 'small red', 'sauce', 'lightly beaten', 'halves -', 'breast halves', 'fresh black', 
                        'large chunks', 'skinless boneless', 'light brown', 'cracked black', 'ice', 'marinated artichoke', 
-                       'fresh broccoli', 'thin strips', 'bulk italian', 'red bell']
+                       'fresh broccoli', 'thin strips', 'bulk italian', 'red bell', 'chile powder', 'cheese food',
+                       'thick slices', 'dressing mix', 'salad dressing', 'deep frying', 'whole kernel', 'large green',
+                       'bite-size pieces', 'active dry', 'sweetened condensed', 'allspice', 'pasta']
     basic_ingredients = set([b for b in basic_ingredients if b not in false_positives])
     
     # add some notable omissions
