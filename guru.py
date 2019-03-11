@@ -48,9 +48,15 @@ class Guru(object):
         self.fruits["category"] = "fruit"
         self.cheeses = pd.read_csv("keywords/cheeses.csv")
         self.cheeses["category"] = "cheese"
+        self.staples = pd.read_csv("keywords/staples.csv")
+        self.staples["category"] = "staples"
+        self.alcohol = pd.read_csv("keywords/alcohol.csv")
+        self.alcohol["category"] = "alcohol"
+        self.pasta = pd.read_csv("keywords/pasta.csv")
+        self.pasta["category"] = "pasta"
         self.eggDairy = pd.read_csv("keywords/eggdairy.csv")
         self.eggDairy["category"] = "eggdairy"
-        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.eggDairy], sort=True)
+        self.knownIngredients = self.meats.append([self.vegproteins, self.spices, self.sauces, self.oils, self.herbs, self.vegetables, self.fruits, self.cheeses, self.staples, self.alcohol, self.pasta, self.eggDairy], sort=True)
         self.knownIngredients["name"] = self.knownIngredients["name"].str.lower()
 
     def getIngredientBaseType(self, ingredient):
