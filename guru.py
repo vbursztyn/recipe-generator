@@ -55,6 +55,14 @@ class Guru(object):
 
     def getIngredientBaseType(self, ingredient):
         # what is it? a meat, spice/condiment or what?
+        
+        # if it contains the word cheese, then it's a cheese, same for sauce 
+        if "cheese" in ingredient:
+            return "cheese"
+        if "sauce" in ingredient:
+            return "sauce"
+        
+        # if it's not that easy, we look for the best match
         needle = ingredient.lower()
         bestMatch = self.getClosestIngredientMatch(needle)
         if bestMatch:
@@ -68,6 +76,7 @@ class Guru(object):
         if short_form:
             ingredient = short_form
         ingredient = ingredient.lower()
+        
         matchThreshold = 80 # must be 80% similar at least -- we can tweak this as necessary
         matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > matchThreshold]
         if len(matches) > 1:
