@@ -1110,12 +1110,17 @@ TRANSFORMS["toUnhealthy"] = {
     "cooking spray": ["lard"],
     "black beans": ["pinto beans with lard"],
     "extra virgin olive oil": ["canola oil"],
-    "honey":["white sugar"], # Victor's suggestions
-    "agave":["white sugar"],
-    "tomato":["ketchup"],
-    "chicken":["rib-eye steak"],
-    "salmon":["imitation crab meat"],
-    "tuna":["imitation crab meat"],
-    "cod":["imitation crab meat"],
-    "whitefish":["imitation crab meat"]
+    "honey": ["white sugar"], # Victor's suggestions
+    "agave": ["white sugar"],
+    "tomato sauce": ["ketchup"],
+    "marinara sauce": ["ketchup"],
+    "marinara" : ["ketchup"],
+    "beef": ["rib-eye steak"],
+    "chicken": ["rib-eye steak"],
+    "turkey": ["rib-eye steak"],
+    "veal": ["rib-eye steak"],
+    "salmon": ["rib-eye steak"],
+    "tuna": ["rib-eye steak"],
+    "cod": ["rib-eye steak"],
+    "whitefish": ["rib-eye steak"]
 }
