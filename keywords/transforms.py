@@ -235,32 +235,7 @@ TRANSFORMS["italian"] = {
  'cucumber': ['kale', 'yellow squash', 'zucchini', 'spinach'],
  # end of Piotr's automatically generated list
  'bell pepper': ['yellow squash', 'kale', 'zucchini'],
- }
-
-
-"""
-italian:
-'garlic', 'olive oil', 'dried oregano', 'dried basil', 'parmesan cheese',
-'italian sausage', 'black pepper', 'mozzarella cheese', 'fresh parsley',
-'eggplant', 'black olives'
-
-french:
-'butter', 'vanilla extract', 'nutmeg', 'swiss cheese'
-
-mexican:
-'garlic', 'chili powder', 'fresh cilantro', 'salsa', 'cheddar cheese',
-'black beans', 'beef', 'jalapeño pepper', 'monterey jack cheese',
-'green onions', 'green pepper', 'black olives'
-
-indian:
-'garlic', 'turmeric', 'cumin', 'fresh cilantro', 'garam masala', 'coriander',
-'chili powder', 'plain yogurt', 'curry powder', 'cayenne pepper',
-'fresh ginger root', 'cumin seeds', 'mustard seed', 'paprika'
-
-japanese:
-'soy sauce', 'mirin', 'garlic', 'fresh ginger root', 'sesame oil', 'sake',
-'rice vinegar'
-"""
+}
 
 
 TRANSFORMS['mexican'] = { 	
@@ -367,9 +342,7 @@ TRANSFORMS['mexican'] = {
  'strawberries': ['avocado'],
  'orange': ['lime'],
  'salmon': ['shrimp'],
- 'hot sauce': ['jalapeño pepper'],
-# end of Piotr's automatically generated list 
- 'bell pepper': ['chili beans', 'black olives', 'kernel corn's],
+ 'hot sauce': ['jalapeño pepper']
 }
 
 TRANSFORMS["japanese"] = {
