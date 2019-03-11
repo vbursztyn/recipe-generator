@@ -1,3 +1,5 @@
+import os
+
 from guru import Guru
 from recipe import Recipe
 from recipe_fetcher import RecipeFetcher
@@ -11,7 +13,7 @@ class InteractionManager(object):
             ("Make it healthier", self.makeHealthier),
             ("Make it less healthy (but why?)", self.makeLessHealthy),
             ("Switch it to a different cuisine", self.cuisineSwitcherOptions),
-            ("Mix it up! (aka: make a reviewer-suggested alteration)", self.mixItUp),
+            # ("Mix it up! (aka: make a reviewer-suggested alteration)", self.mixItUp),
             ("Nevermind, let's start over with a different recipe.", self.recipePrompt)
         ]
         # and a list of our supported cuisines...edit at will!
@@ -44,7 +46,7 @@ class InteractionManager(object):
 
     def presentRecipeOptions(self, returned=False):
         if returned:
-            print("\nOnce you've taken in the recipe above, just let me know if there's anything else you want to do with "+str(self.recipe.name)+".")
+            print("Once you've taken in the recipe above, just let me know if there's anything else you want to do with "+str(self.recipe.name)+".")
             print("(Note that any changes listed below will be changes to the original recipe, not the latest altered version.)")
         else:
             print("\n\nWhat do you want to do to this "+str(self.recipe.name)+" recipe?")
@@ -74,8 +76,16 @@ class InteractionManager(object):
     #
     # the follow-on interactions
     # the GURU gets hooked in here
+    def clearConsole(self):
+        try:
+            print(chr(27) + "[2J")
+            # os.system('cls' if os.name == 'nt' else 'clear')
+        except:
+            pass
+
     def vegIt(self):
         self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, "meatToVeg")
+        self.clearConsole()
         print("Recipe with less meat, coming right up!")
         print(changeStatement)
         print(self.recipe)
@@ -84,6 +94,7 @@ class InteractionManager(object):
 
     def unVegIt(self):
         self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, "vegToMeat")
+        self.clearConsole()
         print("You're a real meat-eater, huh?")
         print(changeStatement)
         print(self.recipe)
@@ -92,6 +103,7 @@ class InteractionManager(object):
 
     def makeHealthier(self):
         self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, "toHealthy")
+        self.clearConsole()
         print("Behold, a healthier take on this recipe!")
         print(changeStatement)
         print(self.recipe)
@@ -100,6 +112,7 @@ class InteractionManager(object):
 
     def makeLessHealthy(self):
         self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, "toUnhealthy")
+        self.clearConsole()
         print("You want it to be worse for you? Weird, but okay.")
         print(changeStatement)
         print(self.recipe)
@@ -129,6 +142,7 @@ class InteractionManager(object):
             self.cuisineSwitcherOptions()
 
     def switchCuisineTo(self, cuisine):
+        self.clearConsole()
         print("Aha, I like " + cuisine.capitalize() + " food, too!")
         self.recipe, changeStatement = self.guru.transformRecipeStyle(self.originalRecipe, cuisine)
         print(changeStatement)
@@ -136,13 +150,13 @@ class InteractionManager(object):
         print("\n\n")
         self.presentRecipeOptions(returned=True)
 
-    def mixItUp(self):
-        print("\n\nTODO: Teach the Guru to take suggestions from reviewers and alter the given recipe.")
-        print("Someone on allrecipes.com suggested that this is another take worth trying:")
-        # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
-        print(self.recipe)
-        print("\n\n")
-        self.presentRecipeOptions(returned=True)
+    # def mixItUp(self):
+    #     print("\n\nTODO: Teach the Guru to take suggestions from reviewers and alter the given recipe.")
+    #     print("Someone on allrecipes.com suggested that this is another take worth trying:")
+    #     # TODO: here goes the call to guru to update the self.recipe by passing self.originalRecipe
+    #     print(self.recipe)
+    #     print("\n\n")
+    #     self.presentRecipeOptions(returned=True)
 
     # dev-time helper
     def run_recipes(self, searchTerm="mexican", displayCount=5):
