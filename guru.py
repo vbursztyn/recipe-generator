@@ -11,10 +11,11 @@ from nutritional_transformation import NutritionalTransformation
 from keywords.transforms import TRANSFORMS
 import RecipeStep
 
-# note, some of the raw list ingredient data sources imported below
-# contain some elements from
-# https://github.com/rkm660/Group10Recipe/blob/master/foods.txt
-# and https://raw.githubusercontent.com/tejaswineesohoni/Recipe-Transformer/master/source/vocabulary/ingredientTypes.json
+# NOTE: A few of the raw list ingredient data sources imported below contain elements
+# sourced from one of either https://github.com/rkm660/Group10Recipe/blob/master/foods.txt
+# or https://raw.githubusercontent.com/tejaswineesohoni/Recipe-Transformer/master/source/vocabulary/ingredientTypes.json
+# the others are either scraped, assembled programatically via statistical methods, or hand-assembled
+
 
 # a helper function used in the search/matching below
 def fuzzyFind(row, col, searchTerm):
@@ -65,8 +66,8 @@ class Guru(object):
 
     def getIngredientBaseType(self, ingredient):
         # what is it? a meat, spice/condiment or what?
-        
-        # if it contains the word cheese, then it's a cheese, same for sauce 
+
+        # if it contains the word cheese, then it's a cheese, same for sauce
         if "cheese" in ingredient:
             return "cheese"
         if "sauce" in ingredient:
@@ -75,7 +76,7 @@ class Guru(object):
             return "staples"
         if "bell pepper" in ingredient:
             return "vegetable"
-        
+
         # if it's not that easy, we look for the best match
         needle = ingredient.lower()
         bestMatch = self.getClosestIngredientMatch(needle)
@@ -90,7 +91,7 @@ class Guru(object):
         if short_form:
             ingredient = short_form
         ingredient = ingredient.lower()
-        
+
         matchThreshold = 80 # must be 80% similar at least -- we can tweak this as necessary
         matches = self.knownIngredients[self.knownIngredients.apply(lambda row: fuzzyFind(row, "name", ingredient), axis=1) > matchThreshold]
         if len(matches) > 1:
@@ -126,7 +127,8 @@ class Guru(object):
     def transformRecipeStyle(self, recipe, transformType):
         newRecipe = deepcopy(recipe)
 
-        # for tracking changes and printing them at the end, just append new statements to this list:
+        # for tracking changes and printing them at the end
+        # just append new statements to this list:
         changeLog = []
 
         if newRecipe.subcomponents:
@@ -154,6 +156,11 @@ class Guru(object):
         # However, we only want to do this if they appear in the same step (like broth (now water) + water in a soup base)
         # TODO
 
+        changeStatement = self.assembleChangeStatement(changeLog)
+
+        return newRecipe, changeStatement
+
+    def assembleChangeStatement(self, changeLog):
         changeStatement = "\n=============\n==CHANGELOG==\n"
         if changeLog:
             changesList = "\n - ".join(changeLog)
@@ -161,8 +168,7 @@ class Guru(object):
         else:
             changeStatement += "Given what you asked for, this recipe already seems pretty good to go!"
         changeStatement += "\n=============\n"
-
-        return newRecipe, changeStatement
+        return changeStatement
 
     #
     # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
@@ -243,12 +249,12 @@ class Guru(object):
         if type not in TRANSFORMS:
             return None
 
-        # if ingredient.name in TRANSFORMS[type].keys() 
+        # if ingredient.name in TRANSFORMS[type].keys()
         # first check if there's a fitting key in the database
         fitting_keys = [k for k in TRANSFORMS[type].keys() if k in ingredient.name]
         if fitting_keys != []:
             keys_length = [len(k.split()) for k in fitting_keys]
-            key = fitting_keys[keys_length.index(max(keys_length))] 
+            key = fitting_keys[keys_length.index(max(keys_length))]
             optionCount = len(TRANSFORMS[type][key])
             optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
             return TRANSFORMS[type][key][optSelection]

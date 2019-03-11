@@ -35,7 +35,7 @@ TRANSFORMS["italian"] = {
     'sesame seeds': ["fennel seed"],
     'barbeque sauce': ['marinara sauce','italian-style salad dressing'],
     'processed cheese food': ['ricotta cheese','mozzarella cheese'],
-    'cumin': ['italian seasoning', 'oregano','crushed red pepper flakes'],
+    'cumin': ['italian seasoning', 'oregano','crushed red pepper'],
     'cumin seeds': ['fennel seeds'],
     'worcestershire sauce': ['italian-style salad dressing'],
     'gochujang': ['pumpkin puree'],
