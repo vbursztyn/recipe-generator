@@ -202,6 +202,15 @@ class RecipeStep:
                 return expand_str_placeholders(tmp, self.placeholders)
         return 'unknown'
 
+    def get_present_ingredients(self):
+        ingredients = []
+        for plac in self.placeholders.keys():
+            if re.match(r'^__ingredient_\d+__$', plac):
+                ingr = self.placeholders[plac].meta['ingredient']
+                if not any(ingr.statement == ingr2.statement for ingr2 in ingredients):
+                    ingredients.append(ingr)
+        return ingredients
+
     def __str__(self):
         return expand_str_placeholders(self._processed_text, self.placeholders)
 
@@ -210,6 +219,9 @@ class RecipeStep:
         output += 'NormalStr: {}\n'.format(self.__str__())
         output += 'TaggedStr: {}\n'.format(self._processed_text)
         output += 'Cooking action(s): {}\n'.format(make_str_list(self.get_actions()))
+        output += 'Ingredients:\n'
+        for ingr in self.get_present_ingredients():
+            output += '  - {}\n'.format(ingr.name)
         output += 'Tools: {}\n'.format(make_str_list(self.get_needed_tools()))
         output += 'Time: {}\n'.format(self.get_time_str())
         return output
