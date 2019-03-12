@@ -4,7 +4,7 @@ transformer = []
 
 # THESE FIRST TWO ARE LISTS USED BY INGREDIENT TRANSFORMER WHEN DECIDING WHAT TO DOUBLE OR HALVE FOR toHealthy/toUnhealthy
 # Please add whatever makes sense...
-TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream"]
+TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream", "mayonnaise"]
 TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
 
 TRANSFORMS["italian"] = {
@@ -370,6 +370,7 @@ TRANSFORMS["vegToMeat"] = {
 
 TRANSFORMS["toHealthy"] = {
     "beef": ["chicken"],
+    "bacon": ["turkey bacon"],
     "hamburger": ["turkey burger"],
     "white rice": ["brown rice"],
     "lard": ["low-fat margarine"],
@@ -380,7 +381,7 @@ TRANSFORMS["toHealthy"] = {
     "egg": ["egg white"],
     "eggs": ["egg whites"],
     "lettuce": ["kale"],
-    "mayonnaise": ["low-fat salad dressing"],
+    "mayonnaise": ["Vegenaise"],
     "vegetable oil": ["olive oil", "coconut oil"],
     "canola oil": ["olive oil", "coconut oil"],
     "vegetable broth": ["water"],

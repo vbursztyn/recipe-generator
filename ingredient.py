@@ -1,16 +1,15 @@
 from copy import copy, deepcopy
 import re
 
-from guru import Guru
 from keywords.units import UNITS
 from keywords.prep import PREPSTEPS
 
 class Ingredient(object):
-    def __init__(self, statement, guru = None):
+    def __init__(self, statement, guru):
         self.statement = statement
         self.altered = False # changed during recipe/ingredient transformation
         self.addedByTransform = False # changed during recipe/ingredient transformation
-        self.guru = guru if guru != None else Guru()
+        self.guru = guru  # if guru != None else Guru()
         self.name = None
         self.baseType = None
         self.quantity = None
