@@ -7,8 +7,9 @@ import pandas as pd
 
 from basic_ingredients import close_basic_ingredient
 from config import get_config
-from nutritional_transformation import NutritionalTransformation
 from keywords.transforms import TRANSFORMS
+from ingredient import Ingredient
+from nutritional_transformation import NutritionalTransformation
 import RecipeStep
 
 # NOTE: A few of the raw list ingredient data sources imported below contain elements
@@ -135,26 +136,19 @@ class Guru(object):
             # do it by subcomponent
             allNewIngs = []
             for subc in newRecipe.subcomponents:
-                newIngs, changeLog = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType, changeLog)
+                newIngs, changeLog = self.transformIngredients(newRecipe.ingredientsBySubcomponent[subc], transformType, changeLog, newRecipe)
                 newRecipe.ingredientsBySubcomponent[subc] = newIngs
                 allNewIngs.append(subc)
                 allNewIngs.extend(newIngs)
             newRecipe.allIngredients = allNewIngs
         else:
             # do it all at once
-            newRecipe.allIngredients, changeLog = self.transformIngredients(newRecipe.allIngredients, transformType, changeLog)
+            newRecipe.allIngredients, changeLog = self.transformIngredients(newRecipe.allIngredients, transformType, changeLog, newRecipe)
 
         # okay, we've got new ingredients
-        # TODO: change the instructions based on the ingredient shift
-        # NOTE: anything in newRecipe.allIngredients or newRecipe.ingredientsBySubcomponent will have either
-        # self.altered = True or self.addedByTransform = True if it was changed/added during transform
+        # update the steps
         ingr_subs = {ingr.statement: ingr for ingr in newRecipe.allIngredients if ingr.altered}
         RecipeStep.modify_steps(newRecipe.steps, ingr_subs)
-
-        # THOUGHT: DEDUPE!
-        # Example: we might have added water to a recipe with water already in it and need to combine those things
-        # However, we only want to do this if they appear in the same step (like broth (now water) + water in a soup base)
-        # TODO
 
         changeStatement = self.assembleChangeStatement(changeLog)
 
@@ -174,9 +168,8 @@ class Guru(object):
     # NOW, THE INGREDIENT TRANSFORM FUNCTIONS (USING HARDCODED STUFF IN keywords/transforms.py)
     #
 
-    def transformIngredients(self, allIngredients, type, changeLog=[]):
+    def transformIngredients(self, allIngredients, type, changeLog, newRecipe):
         newIngList = []
-        addedIngs = []
         replacedIngs = [] # for dev bookkeeping
         replaceCount = 0
         # temp hack for some testing
@@ -185,7 +178,7 @@ class Guru(object):
         # end hack
         for i,ing in enumerate(allIngredients):
             # get the hardcoded cases first, if possible
-            rollingIngs = [ing for ing in newIngList+allIngredients[i:]]
+            rollingIngs = [ring for ring in newIngList+allIngredients[i:] if ing.name != ring.name]
             swappedIng = self.ingredientTransformer(ing, type, rollingIngs)
             reason = None
             # special cases for Victor's methods
@@ -213,20 +206,28 @@ class Guru(object):
                 # no replacement found...add the old ing back to the new list
                 newIngList.append(ing)
 
+        # if we're making this non-vegetarian, is/was there meat in it?
+        if type == "vegToMeat" and not [ing for ing in newIngList if ing.baseType == "meat"]:
+            # if not, add some meat...
+            addedIng = Ingredient("1/4 pound of bacon, cut into 1/4 inch squares", self)
+            addedOil = Ingredient("1 tablespoon of olive oil", self)
+            newStep = RecipeStep.make_step("And now, fry the bacon squares in olive oil until crisp. After cooling, sprinkle a handful on top.", [addedIng, addedOil])
+
+            addedIng.addedByTransform = True
+            addedOil.addedByTransform = True
+
+            newIngList.append(addedIng)
+            newIngList.append(addedOil)
+            newRecipe.steps.append(newStep)
+            changeLog.append("Added some homemade bacon crumbles")
+
         if replaceCount == 0:
             # we didn't replace anything in the recipe
-            # special cases!
-            # if replaceCount == 0 and type is vegToMeat and there's no meat already, add meat to addedIngs
-            # TODO
-            # REMEMBER TO USE: changeLog.append("Added "+str(ing.name))
 
-            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices IF THEY'RE NOT ALREADY IN THERE to addedIngs
+            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices IF THEY'RE NOT ALREADY IN THERE
+
             # TODO
             pass
-
-        for ai in addedIngs:
-            # flag the things that are being added as such
-            ai.addedByTransform = True
 
         if type in ["toHealthy", "toUnhealthy"]:
             # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
@@ -240,9 +241,7 @@ class Guru(object):
                     newIngList[i].altered = True
                     changeLog.append(modifierKeyword+" the "+str(ing.name))
 
-        outputIngs = newIngList + addedIngs
-
-        return outputIngs, changeLog
+        return newIngList, changeLog
 
     def ingredientTransformer(self, ingredient, type, currentIngs):
         # NOTE: CURRENTLY RETURNS A STRING NAME OF INGREDIENT TO MATCH SIGNATURE METHOD OF OTHER TRANSFORMERS
