@@ -355,6 +355,7 @@ TRANSFORMS["meatToVeg"] = {
     "hamburgers": ["Impossible Burgers", "Beyond Burgers", "tofu"],
     "hot dog": ["Smart Dog"],
     "hot dogs": ["Smart Dogs"],
+    "steak": ["portobello mushrooms", "jackfruit"],
     "beef": ["portobello mushrooms", "jackfruit"],
     "ground beef": ["Morningstar Farms Veggie Crumbles"],
     "beef bouillon": ["vegetable bouillon"],
