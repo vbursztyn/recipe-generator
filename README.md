@@ -3,7 +3,7 @@ Project 2 for Northwestern's EECS 337.
 Developed by: Victor Bursztyn, Piotr Pstragowski, Mike D'Arcy, Andrew Paley  
 Github: https://github.com/vbursztyn/recipe-generator
 
-Basic setup:
+Basic setup and execution:
 
 * pip install -r requirements.txt
 * python main.py
@@ -71,3 +71,10 @@ In the case of "to healthy/unhealthy", the ingredient substitutions were obtaine
 In the case of "to Italian/Mexican/Japanese", the ingredient subtitution lists were obtained by downloading a large sample of recipes from allrecipes.com (stored in allrecipe_data/allrecipes_db.pickle) and computing which ingredients occur disproportianately often in recipes corresponding to a given cuisine. The lists were then created by mapping an ingredient of a given-type to a "highly-scoring" ingredient of the same type. These were then cleaned-up by hand to remove subtitutions that seem unlikely to yield satisfactory results. 
 
 In the case of "to vegetarian/non-vegetarian" the lists were written by hand and follow standard vegetarian guidelines for making a recipe meatless (for example, replacing chicken by tofu and beef by jackfruit) or their reverse.
+
+---
+
+The following datasets were partially included or consulted in the course of this project:
+
+[1] USDA - Food Composition Database at https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip (used in "2. Make it healthier" and "3. Make it less healthy")
+[2] FooDB - Food Component Database at http://foodb.ca/ (used as seed for our manually enriched lists, which in turn are used in all transformations)
