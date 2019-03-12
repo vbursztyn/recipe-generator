@@ -54,7 +54,7 @@ class Recipe(object):
         print('\n[STEPS]')
         RecipeStep.print_steps(self.steps)
         # self.print_nutrition_info()
-        print("============\n\n")
+        print("============")
         return("\n")
 
     def print_ingredients(self):
