@@ -1,6 +1,7 @@
 from copy import copy, deepcopy
 import re
 
+import fractions
 import math
 from fractions import Fraction
 
@@ -150,6 +151,7 @@ class Ingredient(object):
                 if len(self.quantity.split("/")) > 1:
                     # it's a fraction...split it apart
                     # first...is there a whole number, too?
+                    # test
                     spaceChunks = self.quantity.split(" ")
                     if len(spaceChunks) == 1:
                         # just a fraction
@@ -158,7 +160,7 @@ class Ingredient(object):
                         self.convertibleQuantity = True
                     elif len(spaceChunks) == 2:
                         firstPart = int(spaceChunks[0])
-                        fractChunks = self.quantity.split("/")
+                        fractChunks = spaceChunks[1].split("/")
                         secondPart = int(fractChunks[0]) / int(fractChunks[1])
                         self.quantity = firstPart + secondPart
                         self.convertibleQuantity = True
@@ -226,6 +228,10 @@ class Ingredient(object):
         # if there's a hanging "bulk" in there, it's pretty likely to be implied by this point...
         if workingStatement.find("bulk") == 0:
             workingStatement = workingStatement[4:].strip()
+
+        # if there's a hanging of in there, scrap it
+        if workingStatement.find("of") == 0:
+            workingStatement = workingStatement[2:].strip()
 
         # GET THE BASE TYPE
         # ask the guru for help, so we"re not constantly loading external data per ingredient
