@@ -1,6 +1,7 @@
 # recipe-generator
 Project 2 for Northwestern's EECS 337.  
 Developed by: Andrew Paley, Mike D'Arcy, Piotr Pstragowski, Victor Bursztyn.
+
 Github: https://github.com/vbursztyn/recipe-generator
 
 Basic setup and execution:
@@ -18,7 +19,7 @@ After running, the program first asks the user to provide an url to a recipe fro
 
 - This will modify the recipe by making it vegetarian while keeping it as close to the original as possible. This means that meat products will be replaced by their closest vegetarian substitutes. 
 
-- After modifying the recipe, the program will print out the new version in a human-readable format, as a list of ingredients followed by a list of steps that should be followed by the user. To make it easier to spot the differneces between this and the original recipe, the program will also highlight the changes which were made. 
+- After modifying the recipe, the program will print out the new version in a human-readable format, as a list of ingredients followed by a list of steps that should be followed by the user. To make it easier to spot the differences between this and the original recipe, the program will also highlight the changes which were made. 
 
 - The user will then be presented with an option to apply a different transformation or start working with a different recipe. Note that these changes are not cumulative, one always starts with the original recipe. This applies to all of the transformations below. 
 
