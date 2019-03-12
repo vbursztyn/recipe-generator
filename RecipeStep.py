@@ -118,7 +118,6 @@ def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
             steps.insert(i+1, new_step)
             i += 1
         i += 1
-        
 
 
 class Placeholder:
@@ -156,6 +155,10 @@ class RecipeStep:
         for i, tok in enumerate(tokens):
             if tok == old_ingr_ex['placeholder']:
                 tokens[i] = new_ingr_ex['placeholder']
+                if 0 < i and re.match(r'^__unit_\d+__$', tokens[i-1]) and tokens[i-1] in self.placeholders:
+                    self.placeholders[tokens[i-1]] = new_ingr.get_pretty_quantity_str() + ' ' + new_ingr.unit
+                elif 1 < i and re.match(r'^__unit_\d+__$', tokens[i-2]) and tokens[i-2] in self.placeholders:
+                    self.placeholders[tokens[i-2]] = new_ingr.get_pretty_quantity_str() + ' ' + new_ingr.unit
         self._processed_text = ' '.join(tokens)
 
     def sub_ingredients(self, ingr_subs):
