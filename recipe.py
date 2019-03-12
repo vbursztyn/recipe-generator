@@ -88,11 +88,11 @@ class Recipe(object):
         # are there subcomponents to worry about?
         if not self.subcomponents:
             for ing in self.allIngredients:
-                print(ing.__repr__())
+                print(ing.verboseRep())
         else:
             # print by subcomponent
             for subc in self.subcomponents:
                 print(subc.upper() + ":")
                 for ing in self.ingredientsBySubcomponent[subc]:
-                    print(ing.__repr__())
+                    print(ing.verboseRep())
                 print("----------")
