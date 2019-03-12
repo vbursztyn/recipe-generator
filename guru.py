@@ -30,7 +30,12 @@ class Guru(object):
     Do any heavy loading here (regex, pandas, etc) so it gets done once and passed around.'''
     def __init__(self):
         self.config = get_config()
-        self.knownCuisines = ["italian", "mexican", "japanese", "korean", "polish"] # IN SYNC WITH keywords/transforms.py
+        self.knownCuisines = ["italian", "mexican", "japanese"] # IN SYNC WITH keywords/transforms.py
+        self.strongSpices = {
+            "japanese":["ginger","soy sauce"],
+            "mexican": ["chili powder", "cumin", "cilantro"],
+            "italian": ["italian seasoning", "oregano", "basil"]
+        }
         self.setUpIngredients()
 
     def setUpIngredients(self):
@@ -218,23 +223,32 @@ class Guru(object):
             # if not, add some meat...
             addedIng = Ingredient("1/4 pound of bacon, cut into 1/4 inch squares", self)
             addedOil = Ingredient("1 tablespoon of olive oil", self)
-            newStep = RecipeStep.make_step("And now, fry the bacon squares in olive oil until crisp. After cooling, sprinkle a handful on top.", [addedIng, addedOil])
+            directionsParser = RecipeStep.RecipeDirectionsParser("", [addedIng, addedOil])
+            newStep1 = directionsParser.direction_to_recipe_step("Fry the bacon with olive oil on medium high heat until crisp.")
+            newStep2 = directionsParser.direction_to_recipe_step("Allow bacon to cool, and then sprinkle it on top.")
 
             addedIng.addedByTransform = True
             addedOil.addedByTransform = True
 
             newIngList.append(addedIng)
             newIngList.append(addedOil)
-            newRecipe.steps.append(newStep)
+            newRecipe.steps.append(newStep1)
+            newRecipe.steps.append(newStep2)
             changeLog.append("Added some homemade bacon crumbles")
 
-        if replaceCount == 0:
-            # we didn't replace anything in the recipe
-
-            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices IF THEY'RE NOT ALREADY IN THERE
-
-            # TODO
-            pass
+        if replaceCount == 0 and type in self.knownCuisines:
+            # breakpoint()
+            # TODO: finish this
+            spices = self.strongSpices[type]
+            ingNames = [ing.name for ing in newIngList if ing.baseType in ["spice","herb"]]
+            matched = False
+            for name in ingNames:
+                for spice in spices:
+                    if name in spice or spice in name:
+                        matched = True
+            if not matched:
+                # add the spice
+                pass
 
         if type in ["toHealthy", "toUnhealthy"]:
             # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
@@ -274,9 +288,10 @@ class Guru(object):
             # optionCount = len(TRANSFORMS[type][key])
             # optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
             # NO LONGER RANDOM -- NOW ITERATES THROUGH LIST UNTIL IT HITS A NON-BLOCKED OPTION
+            # MAKES SURE TO PREVENT LIKE-KIND SWAPS
             for option in TRANSFORMS[type][key]:
                 matches = [match for match in blockers if match in option or option in match]
-                if not matches:
+                if not matches and ingredient.name not in [option, option[0:-1], option+"s"]:
                     return option
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform

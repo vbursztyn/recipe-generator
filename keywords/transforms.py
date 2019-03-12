@@ -220,7 +220,7 @@ TRANSFORMS["japanese"] = {
  'rum': ['sake'],
  'kielbasa': ['smoked tofu'],
  'bay leaves': ['ginger'],
- 'italian seasoning': ['soy sauce', 'teriaki sauce'],
+ 'italian seasoning': ['soy sauce', 'teriyaki sauce'],
  'margarine': ['sesame oil'],
  'capers': ['leeks', 'ginger', 'cucumber', 'green chiles'],
  'oyster sauce': ['teriyaki sauce', 'soy sauce'],
