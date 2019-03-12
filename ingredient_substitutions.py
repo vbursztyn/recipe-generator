@@ -1,13 +1,26 @@
+# This file contains methods which use the statistical analysis of the database of recipes from  allrecipes.com 
+# to produce dictionaries of ingredient subtitutions.
+# Roughtly, the idea is that two ingredients a, b are "functionally equivalent" if there's a lot of ingredients which often 
+# appear with both a, b, but if a, b rarely appear together. 
+
 import os 
+
 import json
+
 import pickle
+
 from operator import itemgetter
 
 from allrecipe_db import AllRecipe, load_allrecipe_database, basic_ingredients_in_recipe
+
 from basic_ingredients import load_basic_ingredients
+
 from guru import Guru
+
 from recipe import Recipe
+
 from config import get_config
+
 from ingredient import Ingredient
 
 config = get_config()
