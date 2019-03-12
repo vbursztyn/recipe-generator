@@ -110,18 +110,18 @@ class Ingredient(object):
         if prepCheck:
             # we"re dealing with one-to-many here...
             for i, prepStep in enumerate(prepCheck):
-                workingStatement = workingStatement.replace(prepStep, "")
-            if len(prepCheck) > 1 and i == len(prepCheck)-1:
-                # check for orphaned ands/ors
-                # cheating a bit by looking for double spaces...if this works, it avoid
-                # regex permutations...
-                hunter = "  (?:and|or) ?"
-                matched = re.search(hunter, workingStatement)
-                if matched:
-                    workingStatement = re.sub(hunter, "", workingStatement)
-            else:
-                workingStatement = workingStatement.replace("  ", " ").strip()
-                self.prepSteps.append(prepStep.strip())
+                workingStatement = workingStatement.replace(prepStep, "").strip()
+                if len(prepCheck) > 1 and i == len(prepCheck)-1:
+                    # check for orphaned ands/ors
+                    # cheating a bit by looking for double spaces...if this works, it avoid
+                    # regex permutations...
+                    hunter = "  (?:and|or) ?"
+                    matched = re.search(hunter, workingStatement)
+                    if matched:
+                        workingStatement = re.sub(hunter, "", workingStatement)
+                else:
+                    workingStatement = workingStatement.replace("  ", " ").strip()
+                    self.prepSteps.append(prepStep.strip())
 
         # ROLE ASSESSMENT
         # TODO: make this smarter and derive role like "protein" or "starch"
