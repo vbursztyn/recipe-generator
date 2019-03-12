@@ -28,11 +28,13 @@ After running, the program first asks the user to provide an url to a recipe fro
 
 2. Make it healthier: 
 
-- This will try to make the recipe healthier. This will be done by trying to find healthier substitutes of given ingredients (for example, replacing white rice with brown rice) but also by trying to change the amounts of certain ingredients known to be unhealthy in large amounts (for example, the program might suggest to halve the amount of salt). 
+- This will try to make the recipe healthier. This will be done by trying to find healthier substitutes of given ingredients (for example, replacing white rice with brown rice) but also by trying to change the amounts of certain ingredients known to be unhealthy in large amounts (for example, the program might suggest to halve the amount of salt).
+- If the program identifies that one or more of said healthier substitutes decrease a bad nutrient (saturated fat, sugars or sodium), the measurable benefits are indicated, e.g., "replaced cheese A with cheese B (50% less fat)" or "replaced bean A with bean B (50% less sodium)."
 
 3. Make it less healthy: 
 
-- This does the opposite of the previous transformation. That is, it will suggest to replace certain ingredients with less healthy ones (for example, to replace chicken with steak) as well as to increase the amount of unhealthy ingredients. 
+- This does the opposite of the previous transformation. That is, it will suggest to replace certain ingredients with less healthy ones (for example, to replace chicken with steak) as well as to increase the amount of unhealthy ingredients.
+- If the program identifies that one or more of said unhealthy substitutes increase a bad nutrient (saturated fat, sugars or sodium), the measurable disadvantages are indicated, e.g., "replaced cheese B with cheese A (2x more fat)" or "replaced bean B with bean A (2x more sodium)."
 
 4. Switch it to a different cuisine: 
 
