@@ -79,7 +79,7 @@ class Recipe(object):
         RecipeStep.print_steps(self.steps)
         print("\n[THE PARSED STEP REPRESENTATION]")
         for step in self.steps:
-            step.internal_info_as_str()
+            print(step.internal_info_as_str())
         # self.print_nutrition_info()
         print("============")
         return("\n")
