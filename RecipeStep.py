@@ -14,6 +14,13 @@ def intervals_overlap(interval1, interval2):
         return interval2[0] < interval1[1]
     return interval1[0] < interval2[1]
 
+def make_str_list(thelist, sep=', ', conjunction='and'):
+    strlist = sep.join([x for x in thelist[:-1]])
+    if len(thelist) > 1:
+        strlist += ' {} '.format(conjunction)
+    strlist += thelist[-1]
+    return strlist
+
 def unitnumstr2float(unitnumstr):
     pieces = unitnumstr.split(' ')
     total = 0
@@ -177,6 +184,35 @@ class RecipeStep:
             if re.match(r'^__cooktool_\d+__$', plac):
                 tools.append(expand_str_placeholders(str(self.placeholders[plac]), self.placeholders))
         return tools
+
+    def get_actions(self):
+        actions = []
+        for plac in self.placeholders.keys():
+            if re.match(r'^__cookverb_\d+__$', plac):
+                actions.append(expand_str_placeholders(str(self.placeholders[plac]), self.placeholders))
+        return actions
+
+    def get_time_str(self):
+        for plac in self.placeholders.keys():
+            tmp = plac
+            if re.match(r'^__fortime_\d+__$', plac):
+                tmp = str(self.placeholders[plac]).split(' ')[-1]
+
+            if re.match(r'^__time_\d+__$', tmp):
+                return expand_str_placeholders(tmp, self.placeholders)
+        return 'unknown'
+
+    def __str__(self):
+        return expand_str_placeholders(self._processed_text, self.placeholders)
+
+    def internal_info_as_str(self):
+        output = ''
+        output += 'NormalStr: {}\n'.format(self.__str__())
+        output += 'TaggedStr: {}\n'.format(self._processed_text)
+        output += 'Cooking action(s): {}\n'.format(make_str_list(self.get_actions()))
+        output += 'Tools: {}\n'.format(make_str_list(self.get_needed_tools()))
+        output += 'Time: {}\n'.format(self.get_time_str())
+        return output
 
 
 class RecipeDirectionsParser:
