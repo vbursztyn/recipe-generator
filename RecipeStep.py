@@ -1,9 +1,11 @@
+import copy
+import re
+
 import nltk
+
 from keywords.cooking_verbs import COOKING_VERBS
 from keywords.units import UNITS
 from keywords.tools import COOKING_TOOLS
-import copy
-import re
 
 
 def intervals_overlap(interval1, interval2):

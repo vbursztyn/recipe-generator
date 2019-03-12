@@ -1,5 +1,6 @@
 
-# List of tools obtained from: https://github.com/rromo12/EECS-337-Recipe-Transformer-Team-9
+# List of tools (but nothing more) obtained from:
+# https://github.com/rromo12/EECS-337-Recipe-Transformer-Team-9
 # That repo is MIT licensed. Here is the corresponding license text:
 #
 #     The MIT License (MIT)
