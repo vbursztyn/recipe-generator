@@ -93,6 +93,33 @@ def modify_steps(steps, ingr_subs):
     for step in steps:
         step.sub_ingredients(ingr_subs)
 
+def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
+    i = 0
+    while i < len(steps):
+        if any(ingr['placeholder'] in steps[i]._processed_text and ingr['ingredient'].statement == reference_ingr.statement for ingr in steps[i].ingredients):
+            new_step = RecipeStep()
+            action_placid = new_step.new_placeholder_id(base_name='cookverb')
+            new_step.placeholders[action_placid] = Placeholder('add')
+            ingredient_exs = []
+            for ingr in new_ingrs:
+                ingr_ex = {
+                    'ingredient': ingr,
+                    'placeholder': new_step.new_placeholder_id(base_name='ingredient'),
+                }
+                ingredient_exs.append(ingr_ex)
+                new_step.placeholders[ingr_ex['placeholder']] = Placeholder(ingr.name, meta=ingr_ex)
+
+            ingrlist = ' , '.join([x['placeholder'] for x in ingredient_exs[:-1]])
+            if len(ingredient_exs) > 1:
+                ingrlist += ' and '
+            ingrlist += ingredient_exs[-1]['placeholder']
+
+            new_step._processed_text = 'Now would be a good time to {} the {}'.format(action_placid, ingrlist)
+            steps.insert(i+1, new_step)
+            i += 1
+        i += 1
+        
+
 
 class Placeholder:
     def __init__(self, string, meta=None):
