@@ -3,19 +3,16 @@
 # Moreover, it contains methods used to manipulate a database of such recipes, which is a list stored in a pickle file.
 # In particular, the database can be automatically populated by fetching recipes of a given keyword. 
 
-# (The database is not necessarily of interest to itself, but rather, it contains interesting data we might want to work with. 
-# For example, it contains answers to questions like: 
-# - which ingredients appear in italian cuisine? 
-# - which ingredients often appear together? 
-# - what are the substitutions suggested in the comments? 
-# The idea of creating one database file is because of IP blocking, allrecipes.com is relatively difficult to access in short 
-# amount of time. 
-
 import os
+
 import pickle
+
 import json
+
 from recipe import Recipe 
+
 from recipe_fetcher import RecipeFetcher
+
 from config import get_config
 
 config = get_config()

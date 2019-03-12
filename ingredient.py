@@ -57,9 +57,12 @@ class Ingredient(object):
             if type(self.quantity) == float:
                 decimals, natural = math.modf(self.quantity)
                 if natural: # if not zero
-                    output += str(natural) + " "
-                fraction = Fraction(decimals).limit_denominator(10)
-                output += "%d/%d" %(fraction.numerator, fraction.denominator)
+                    output += "%d " %(natural)
+                if decimals:
+                    fraction = Fraction(decimals).limit_denominator(10)
+                    output += "%d/%d" %(fraction.numerator, fraction.denominator)
+                else:
+                    output = output[:-1]
                 # output += "%.2f" %(self.quantity) # Alternative simplified version
             else:
                 output += str(self.quantity)

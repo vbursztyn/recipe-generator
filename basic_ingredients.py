@@ -1,5 +1,10 @@
+# This short file contains the method to load the list of basic ingredients obtained from the database of
+# allrecipes.com recipes. 
+
 import os
+
 import json
+
 from config import get_config
 
 config = get_config()
