@@ -50,14 +50,14 @@ class Recipe(object):
         print("============")
         print(self.rawRecipe["name"].upper())
         print("\n[INGREDIENTS]")
-        self.print_ingredients()
+        self.printIngredients()
         print('\n[STEPS]')
         RecipeStep.print_steps(self.steps)
         # self.print_nutrition_info()
         print("============")
         return("\n")
 
-    def print_ingredients(self):
+    def printIngredients(self):
         # are there subcomponents to worry about?
         if not self.subcomponents:
             for ing in self.allIngredients:
@@ -68,4 +68,31 @@ class Recipe(object):
                 print(subc.upper() + ":")
                 for ing in self.ingredientsBySubcomponent[subc]:
                     print(ing)
+                print("----------")
+
+    def verbosePrint(self):
+        print("============")
+        print(self.rawRecipe["name"].upper())
+        print("\n[INGREDIENTS]")
+        self.verbosePrintIngredients()
+        print('\n[STEPS]')
+        RecipeStep.print_steps(self.steps)
+        print("\n[THE PARSED STEP REPRESENTATION]")
+        for step in self.steps:
+            step.internal_info_as_str()
+        # self.print_nutrition_info()
+        print("============")
+        return("\n")
+
+    def verbosePrintIngredients(self):
+        # are there subcomponents to worry about?
+        if not self.subcomponents:
+            for ing in self.allIngredients:
+                print(ing.__repr__())
+        else:
+            # print by subcomponent
+            for subc in self.subcomponents:
+                print(subc.upper() + ":")
+                for ing in self.ingredientsBySubcomponent[subc]:
+                    print(ing.__repr__())
                 print("----------")

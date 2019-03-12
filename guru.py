@@ -12,7 +12,7 @@ from keywords.transforms import TRANSFORMS
 from ingredient import Ingredient
 from nutritional_transformation import NutritionalTransformation
 import RecipeStep
-import gnureadline
+# import gnureadline
 
 # NOTE: A few of the raw list ingredient data sources imported below contain elements
 # sourced from one of either https://github.com/rkm660/Group10Recipe/blob/master/foods.txt
