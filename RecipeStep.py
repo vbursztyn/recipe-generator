@@ -18,7 +18,8 @@ def make_str_list(thelist, sep=', ', conjunction='and'):
     strlist = sep.join([x for x in thelist[:-1]])
     if len(thelist) > 1:
         strlist += ' {} '.format(conjunction)
-    strlist += thelist[-1]
+    if len(thelist) > 0:
+        strlist += thelist[-1]
     return strlist
 
 def unitnumstr2float(unitnumstr):
