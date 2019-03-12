@@ -313,6 +313,7 @@ TRANSFORMS["meatToVeg"] = {
     "turkey breast": ["Tofurkey"],
     "gelatin": ["pectin"],
     "bacon": ["Morningstar Farms Veggie Bacon Strips"],
+    "canadian bacon": ["Morningstar Farms Veggie Bacon Strips"],
     "bacon bit": ["Bac'n Pieces (Vegan)"],
     "bacon bits": ["Bac'n Pieces (Vegan)"],
     "burger": ["Impossible Burger", "Beyond Burger", "tofu"],
@@ -335,6 +336,8 @@ TRANSFORMS["meatToVeg"] = {
     "pork bouillon": ["vegetable bouillon"],
     "pork broth": ["vegetable broth"],
     "pork stock": ["vegetable stock"],
+    "pork": ["tofu", "tempeh", "seitan"],
+    "pork tenderloin": ["tofu", "tempeh", "seitan"],
     "lard": ["margarine"],
     "shortening": ["margarine"],
     "gelatin": ["pectin"],
@@ -347,7 +350,8 @@ TRANSFORMS["meatToVeg"] = {
     "sausage": ["Field Roast Vegan Sausage"],
     "sausages": ["Field Roast Vegan Sausages"],
     "oyster sauce": ["soy sauce"],
-    "sushi": ["avocado"]
+    "sushi": ["avocado"],
+    "anchovies": ["marinated olives"]
 }
 
 TRANSFORMS["vegToMeat"] = {
