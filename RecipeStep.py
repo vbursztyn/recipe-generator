@@ -18,7 +18,8 @@ def make_str_list(thelist, sep=', ', conjunction='and'):
     strlist = sep.join([x for x in thelist[:-1]])
     if len(thelist) > 1:
         strlist += ' {} '.format(conjunction)
-    strlist += thelist[-1]
+    if len(thelist) > 0:
+        strlist += thelist[-1]
     return strlist
 
 def unitnumstr2float(unitnumstr):
@@ -53,12 +54,10 @@ def print_steps(steps):
             match = re.match(r'^__([^_]+)_\d+__$', tokens[j])
             if match:
                 fullstr = expand_str_placeholders(tokens[j], step.placeholders)
-                if match.group(1) == 'ingredient':
-                    fullstr = '[' + fullstr + ']'
-                elif match.group(1) == 'cookverb':
-                    fullstr = '<' + fullstr + '>'
                 tokens[j] = fullstr
-        print('Step {}: {}'.format(i, ' '.join(tokens)))
+        thestr = ' '.join(tokens)
+        thestr = re.sub(r' ([,.])', r'\1', thestr)
+        print('Step {}: {}'.format(i, thestr))
         i += 1
 
 def make_step(action, ingredients, until=None, fortime=None):
@@ -100,10 +99,10 @@ def modify_steps(steps, ingr_subs):
     for step in steps:
         step.sub_ingredients(ingr_subs)
 
-def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
+def add_ingredents_alongside(steps, reference_ingr_stmt, new_ingrs):
     i = 0
     while i < len(steps):
-        if any(ingr['placeholder'] in steps[i]._processed_text and ingr['ingredient'].statement == reference_ingr.statement for ingr in steps[i].ingredients):
+        if any(ingr['placeholder'] in steps[i]._processed_text and ingr['ingredient'].statement == reference_ingr_stmt for ingr in steps[i].ingredients):
             new_step = RecipeStep()
             action_placid = new_step.new_placeholder_id(base_name='cookverb')
             new_step.placeholders[action_placid] = Placeholder('add')
@@ -125,6 +124,12 @@ def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
             steps.insert(i+1, new_step)
             i += 1
         i += 1
+
+def find_serve_stepnum(steps):
+    for i, step in enumerate(steps):
+        if 'serve' in step.get_actions():
+            return i
+    return None
 
 
 class Placeholder:

@@ -233,26 +233,30 @@ class Guru(object):
 
             newIngList.append(addedIng)
             newIngList.append(addedOil)
-            newRecipe.steps.append(newStep1)
-            newRecipe.steps.append(newStep2)
+            serve_stepnum = RecipeStep.find_serve_stepnum(newRecipe.steps)
+            if serve_stepnum is None:
+                serve_stepnum = len(newRecipe.steps)
+            newRecipe.steps.insert(serve_stepnum, newStep1)
+            newRecipe.steps.insert(serve_stepnum+1, newStep2)
             changeLog.append("Added some homemade bacon crumbles")
 
         if replaceCount == 0 and type in self.knownCuisines:
             spices = self.strongSpices[type]
-            presentSpices = [ing.name for ing in newIngList if ing.baseType in ["spice","herb"]]
+            presentSpices = [ing for ing in newIngList if ing.baseType in ["spice","herb"]]
             matched = False
-            for name in presentSpices:
+            for ing in presentSpices:
                 for spice in spices:
-                    if name in spice or spice in name:
+                    if ing.name in spice or spice in ing.name:
                         matched = True
             if not matched and presentSpices:
                 addedSpices = []
                 for spice in spices:
                     addedSpices.append(Ingredient("1 teaspoon of "+spice, self))
+                    changeLog.append("Added 1 teaspoon of "+spice)
 
                 # addedSpices is now a list of spices to add
                 # presentSpices[0] is the name (string) of a spice in the existing steps
-                # TODO: RecipeStep.add_ingredents_alongside(steps, reference_ingr, addedSpices)
+                RecipeStep.add_ingredents_alongside(newRecipe.steps, presentSpices[0].statement, addedSpices)
 
         if type in ["toHealthy", "toUnhealthy"]:
             # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
