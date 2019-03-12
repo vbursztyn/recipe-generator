@@ -5,28 +5,18 @@ Github: https://github.com/vbursztyn/recipe-generator
 
 Basic setup:
 
-1. pip install -r requirements.txt
-
-If you want to regenerate contents in folder 'ingredient_data':
-
-2. python populate_raw_data.py
-3. Check if folder 'raw_data' has new files ('Products.csv' and 'Nutrients.csv'), then:
-4. python calculate_similar_ingredients.py
-5. Check if folder 'ingredient_data' has a new file ('similar_ingredients.pickle'), then:
-6. python get_ingredient_nutrients.py
-
-If you want to regenerate contents in folder 'cuisine_data':
-
-7. python get_cuisine_characteristics.py
+* pip install -r requirements.txt
+* python main.py
 
 ---
 
-Current functionality:
+Current functionality (options [0] to [5]):
 
-* Search AllRecipes by keyword
-* Given a recipe, extract ingredients and directions (unstructured)
-* Given a recipe, extract nutritional data (structured)
-* File 'similar_ingredients.pickle' has a dictionary with lists of substitutions for 780 ingredients based on similar flavor profile
-* File 'ingredient_nutrients.pickle' has a dictionary with nutritional data for 243 of those 780 ingredients, i.e., ~31% of successful string matches on the USDA Food Composition Database
-* File 'cuisine_characteristics.pickle' has a dictionary with the most characteristic traits of well-known international cuisines (e.g. Italian, French, Mexican, Indian, Japanese)
-* Please see Issues for extended backlog
+First, provide the URL of a recipe from AllRecipes.com. Then:
+
+0. Make it vegetarian: 
+1. Make it un-vegetarian: 
+2. Make it healthier: 
+3. Make it less healthy: 
+4. Switch it to a different cuisine: 
+5. Start over with a new recipe.
