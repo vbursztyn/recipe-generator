@@ -3,7 +3,7 @@ Project 2 for Northwestern's EECS 337.
 Developed by: Victor Bursztyn, Piotr Pstragowski, Mike D'Arcy, Andrew Paley  
 Github: https://github.com/vbursztyn/recipe-generator
 
-Basic setup:
+Basic setup and execution:
 
 * pip install -r requirements.txt
 * python main.py
@@ -28,11 +28,13 @@ After running, the program first asks the user to provide an url to a recipe fro
 
 2. Make it healthier: 
 
-- This will try to make the recipe healthier. This will be done by trying to find healthier substitutes of given ingredients (for example, replacing white rice with brown rice) but also by trying to change the amounts of certain ingredients known to be unhealthy in large amounts (for example, the program might suggest to halve the amount of salt). 
+- This will try to make the recipe healthier. This will be done by trying to find healthier substitutes of given ingredients (for example, replacing white rice with brown rice) but also by trying to change the amounts of certain ingredients known to be unhealthy in large amounts (for example, the program might suggest to halve the amount of salt).
+- If the program identifies that one or more of said healthier substitutes decrease a bad nutrient (saturated fat, sugars or sodium), the measurable benefits are indicated, e.g., "replaced cheese A with cheese B (50% less fat)" or "replaced bean A with bean B (50% less sodium)."
 
 3. Make it less healthy: 
 
-- This does the opposite of the previous transformation. That is, it will suggest to replace certain ingredients with less healthy ones (for example, to replace chicken with steak) as well as to increase the amount of unhealthy ingredients. 
+- This does the opposite of the previous transformation. That is, it will suggest to replace certain ingredients with less healthy ones (for example, to replace chicken with steak) as well as to increase the amount of unhealthy ingredients.
+- If the program identifies that one or more of said unhealthy substitutes increase a bad nutrient (saturated fat, sugars or sodium), the measurable disadvantages are indicated, e.g., "replaced cheese B with cheese A (2x more fat)" or "replaced bean B with bean A (2x more sodium)."
 
 4. Switch it to a different cuisine: 
 
@@ -69,3 +71,11 @@ In the case of "to healthy/unhealthy", the ingredient substitutions were obtaine
 In the case of "to Italian/Mexican/Japanese", the ingredient subtitution lists were obtained by downloading a large sample of recipes from allrecipes.com (stored in allrecipe_data/allrecipes_db.pickle) and computing which ingredients occur disproportianately often in recipes corresponding to a given cuisine. The lists were then created by mapping an ingredient of a given-type to a "highly-scoring" ingredient of the same type. These were then cleaned-up by hand to remove subtitutions that seem unlikely to yield satisfactory results. 
 
 In the case of "to vegetarian/non-vegetarian" the lists were written by hand and follow standard vegetarian guidelines for making a recipe meatless (for example, replacing chicken by tofu and beef by jackfruit) or their reverse.
+
+---
+
+The following datasets were partially included or consulted in the course of this project:
+
+1. USDA - Food Composition Database at https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip (used in "2. Make it healthier" and "3. Make it less healthy")
+
+2. FooDB - Food Component Database at http://foodb.ca/ (used as seed for our manually enriched lists, which in turn are used in all transformations)
