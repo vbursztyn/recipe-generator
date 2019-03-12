@@ -29,6 +29,7 @@ PREPSTEPS = [
     "grated",
     "peeled",
     "pitted",
+    "cored",
     "softened",
     "casings removed",
     "cut into 2 inch pieces",
@@ -40,5 +41,8 @@ PREPSTEPS = [
     "cut in half lengthwise",
     "cut in quaters lengthwise",
     "cut in half",
-    "cut in quarters"
+    "cut in quarters",
+    "cut into 1/4 inch squares",
+    "cut into 1/2 inch squares",
+    "cut into 1 inch squares"
 ]
