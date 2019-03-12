@@ -53,12 +53,10 @@ def print_steps(steps):
             match = re.match(r'^__([^_]+)_\d+__$', tokens[j])
             if match:
                 fullstr = expand_str_placeholders(tokens[j], step.placeholders)
-                if match.group(1) == 'ingredient':
-                    fullstr = '[' + fullstr + ']'
-                elif match.group(1) == 'cookverb':
-                    fullstr = '<' + fullstr + '>'
                 tokens[j] = fullstr
-        print('Step {}: {}'.format(i, ' '.join(tokens)))
+        thestr = ' '.join(tokens)
+        thestr = re.sub(r' ([,.])', r'\1', thestr)
+        print('Step {}: {}'.format(i, thestr))
         i += 1
 
 def make_step(action, ingredients, until=None, fortime=None):
