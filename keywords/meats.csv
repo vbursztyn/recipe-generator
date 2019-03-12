@@ -21,19 +21,18 @@ catfish
 cod
 flounder
 haddock
-halibut
 rump roast
 rump roasts
 herring
 mackerel
 pollock
 porgy
-salmon
 sea bass
 snapper
 swordfish
 trout
 tuna
+yellowfin tuna
 clams
 crab
 crayfish
@@ -45,7 +44,6 @@ oysters
 scallops
 squid
 calamari
-shrimp"
 cod
 cod fillet
 cod fillets
@@ -59,6 +57,7 @@ galangal
 gelatin
 ground beef
 roast beef
+beef jerky
 halibut
 ham
 hamburger
@@ -69,6 +68,7 @@ lamb
 lamb chop
 rabbit
 bison
+buffalo
 giblets
 liver
 lobster
@@ -122,6 +122,11 @@ sushi
 tilapia
 tilapia whitefish
 tuna
+tuna fish
+tunafish
+mahi mahi
+mahi-mahi
+mahimahi
 turkey
 ground turkey
 turkey breast

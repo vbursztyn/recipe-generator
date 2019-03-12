@@ -4,7 +4,7 @@ transformer = []
 
 # THESE FIRST TWO ARE LISTS USED BY INGREDIENT TRANSFORMER WHEN DECIDING WHAT TO DOUBLE OR HALVE FOR toHealthy/toUnhealthy
 # Please add whatever makes sense...
-TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream"]
+TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream", "mayonnaise"]
 TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
 
 TRANSFORMS["italian"] = {
@@ -313,6 +313,7 @@ TRANSFORMS["meatToVeg"] = {
     "turkey breast": ["Tofurkey"],
     "gelatin": ["pectin"],
     "bacon": ["Morningstar Farms Veggie Bacon Strips"],
+    "canadian bacon": ["Morningstar Farms Veggie Bacon Strips"],
     "bacon bit": ["Bac'n Pieces (Vegan)"],
     "bacon bits": ["Bac'n Pieces (Vegan)"],
     "burger": ["Impossible Burger", "Beyond Burger", "tofu"],
@@ -335,6 +336,8 @@ TRANSFORMS["meatToVeg"] = {
     "pork bouillon": ["vegetable bouillon"],
     "pork broth": ["vegetable broth"],
     "pork stock": ["vegetable stock"],
+    "pork": ["tofu", "tempeh", "seitan"],
+    "pork tenderloin": ["tofu", "tempeh", "seitan"],
     "lard": ["margarine"],
     "shortening": ["margarine"],
     "gelatin": ["pectin"],
@@ -347,7 +350,8 @@ TRANSFORMS["meatToVeg"] = {
     "sausage": ["Field Roast Vegan Sausage"],
     "sausages": ["Field Roast Vegan Sausages"],
     "oyster sauce": ["soy sauce"],
-    "sushi": ["avocado"]
+    "sushi": ["avocado"],
+    "anchovies": ["marinated olives"]
 }
 
 TRANSFORMS["vegToMeat"] = {
@@ -366,6 +370,7 @@ TRANSFORMS["vegToMeat"] = {
 
 TRANSFORMS["toHealthy"] = {
     "beef": ["chicken"],
+    "bacon": ["turkey bacon"],
     "hamburger": ["turkey burger"],
     "white rice": ["brown rice"],
     "lard": ["low-fat margarine"],
@@ -376,7 +381,7 @@ TRANSFORMS["toHealthy"] = {
     "egg": ["egg white"],
     "eggs": ["egg whites"],
     "lettuce": ["kale"],
-    "mayonnaise": ["low-fat salad dressing"],
+    "mayonnaise": ["Vegenaise"],
     "vegetable oil": ["olive oil", "coconut oil"],
     "canola oil": ["olive oil", "coconut oil"],
     "vegetable broth": ["water"],
