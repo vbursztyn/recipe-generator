@@ -33,6 +33,21 @@ class Ingredient(object):
         self.parse()
         self.assignRole()
 
+    def get_pretty_quantity_str(self):
+        output = ''
+        if type(self.quantity) != float:
+            return str(self.quantity)
+
+        decimals, natural = math.modf(self.quantity)
+        if natural: # if not zero
+            output += "%d" %(natural)
+
+        if decimals:
+            fraction = Fraction(decimals).limit_denominator(10)
+            output += " {:d}/{:d}".format(fraction.numerator, fraction.denominator)
+
+        return output
+
     def __repr__(self):
         output = "-----"
         output += "\nSTATEMENT: " + self.statement
@@ -54,18 +69,7 @@ class Ingredient(object):
         # SORTA NLG IT UP!
         output = ""
         if self.quantity:
-            if type(self.quantity) == float:
-                decimals, natural = math.modf(self.quantity)
-                if natural: # if not zero
-                    output += "%d " %(natural)
-                if decimals:
-                    fraction = Fraction(decimals).limit_denominator(10)
-                    output += "%d/%d" %(fraction.numerator, fraction.denominator)
-                else:
-                    output = output[:-1]
-                # output += "%.2f" %(self.quantity) # Alternative simplified version
-            else:
-                output += str(self.quantity)
+            output += self.get_pretty_quantity_str()
         if self.unit: output += " " + self.unit
         if self.sizeModifier: output += " " + self.sizeModifier
         if self.flavorModifier: output += " " + self.flavorModifier
