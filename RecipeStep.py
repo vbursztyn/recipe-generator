@@ -201,7 +201,9 @@ class RecipeDirectionsParser:
                                 number_str = re.search(r'^__unitnumber_\d+__\b', expanded_plac)
                                 if number_str:
                                     number = unitnumstr2float(str(step.placeholders[expanded_plac[number_str.start():number_str.end()]]))
-                                    if abs(number - ingr1['ingredient'].quantity) >= abs(number - ingr2['ingredient'].quantity):
+                                    ingr1_quant = ingr1['ingredient'].quantity if ingr1['ingredient'].convertibleQuantity else float('nan')
+                                    ingr2_quant = ingr2['ingredient'].quantity if ingr2['ingredient'].convertibleQuantity else float('nan')
+                                    if abs(number - ingr1_quant) >= abs(number - ingr2_quant):
                                         ingr1['positions'].remove(interval1)
                                         return
                                 # When all else fails

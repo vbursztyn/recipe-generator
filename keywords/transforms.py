@@ -1,9 +1,10 @@
+# This file contains the ingredient subtitution lists for the needed recipe transformations
+
 TRANSFORMS = {}
 
 transformer = []
 
 # THESE FIRST TWO ARE LISTS USED BY INGREDIENT TRANSFORMER WHEN DECIDING WHAT TO DOUBLE OR HALVE FOR toHealthy/toUnhealthy
-# Please add whatever makes sense...
 TRANSFORMS["unhealthyIngredients"] = ["salt", "sugar", "brown sugar", "molasses", "cream", "mayonnaise"]
 TRANSFORMS["unhealthyBaseTypes"] = ["oil", "cheese"]
 

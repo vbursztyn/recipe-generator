@@ -1,6 +1,7 @@
 from copy import copy, deepcopy
 import os
 from random import randint
+import re
 
 from fuzzywuzzy import fuzz
 import pandas as pd
@@ -150,6 +151,12 @@ class Guru(object):
         # self.altered = True or self.addedByTransform = True if it was changed/added during transform
         ingr_subs = {ingr.statement: ingr for ingr in newRecipe.allIngredients if ingr.altered}
         RecipeStep.modify_steps(newRecipe.steps, ingr_subs)
+        if transformType == 'meatToVeg':
+            for step in newRecipe.steps:
+                step._processed_text = re.sub(r'\bmeat\b', '"meat"', step._processed_text)
+        elif transformType == 'vegToMeat':
+            for step in newRecipe.steps:
+                step._processed_text = re.sub(r'"meat"', 'meat', step._processed_text)
 
         # THOUGHT: DEDUPE!
         # Example: we might have added water to a recipe with water already in it and need to combine those things
