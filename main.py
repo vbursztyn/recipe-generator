@@ -1,4 +1,5 @@
 import os
+import sys
 
 from guru import Guru
 from recipe import Recipe
@@ -58,7 +59,11 @@ class InteractionManager(object):
             print("\n\nWhat do you want to do to this "+str(self.recipe.name)+" recipe?")
         for i, option in enumerate(self.validChoices):
             print("["+str(i)+"] " + option[0])
-        choice = input("Pick a number to continue: ")
+        try:
+            choice = input("Pick a number to continue: ")
+        except EOFError:
+            print('exit')
+            sys.exit(0)
         try:
             choiceNum = int(choice)
         except:
