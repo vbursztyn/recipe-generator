@@ -36,6 +36,9 @@ class InteractionManager(object):
                 return False
             self.originalRecipe = Recipe(self.rawRecipe, self.guru) # so we can hang on to the original as we mutate it
             self.recipe = self.originalRecipe
+            self.clearConsole()
+            print("Okay, this is what I got:")
+            print(self.recipe)
             self.presentRecipeOptions()
         else:
             self.recipeInputFail()

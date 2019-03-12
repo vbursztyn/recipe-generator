@@ -1,16 +1,19 @@
 from copy import copy, deepcopy
 import re
 
-from guru import Guru
+import fractions
+import math
+from fractions import Fraction
+
 from keywords.units import UNITS
 from keywords.prep import PREPSTEPS
 
 class Ingredient(object):
-    def __init__(self, statement, guru = None):
+    def __init__(self, statement, guru):
         self.statement = statement
         self.altered = False # changed during recipe/ingredient transformation
         self.addedByTransform = False # changed during recipe/ingredient transformation
-        self.guru = guru if guru != None else Guru()
+        self.guru = guru  # if guru != None else Guru()
         self.name = None
         self.baseType = None
         self.quantity = None
@@ -50,7 +53,16 @@ class Ingredient(object):
     def __str__(self):
         # SORTA NLG IT UP!
         output = ""
-        if self.quantity: output += str(self.quantity)
+        if self.quantity:
+            if type(self.quantity) == float:
+                decimals, natural = math.modf(self.quantity)
+                if natural: # if not zero
+                    output += str(natural) + " "
+                fraction = Fraction(decimals).limit_denominator(10)
+                output += "%d/%d" %(fraction.numerator, fraction.denominator)
+                # output += "%.2f" %(self.quantity) # Alternative simplified version
+            else:
+                output += str(self.quantity)
         if self.unit: output += " " + self.unit
         if self.sizeModifier: output += " " + self.sizeModifier
         if self.flavorModifier: output += " " + self.flavorModifier
@@ -139,6 +151,7 @@ class Ingredient(object):
                 if len(self.quantity.split("/")) > 1:
                     # it's a fraction...split it apart
                     # first...is there a whole number, too?
+                    # test
                     spaceChunks = self.quantity.split(" ")
                     if len(spaceChunks) == 1:
                         # just a fraction
@@ -147,7 +160,7 @@ class Ingredient(object):
                         self.convertibleQuantity = True
                     elif len(spaceChunks) == 2:
                         firstPart = int(spaceChunks[0])
-                        fractChunks = self.quantity.split("/")
+                        fractChunks = spaceChunks[1].split("/")
                         secondPart = int(fractChunks[0]) / int(fractChunks[1])
                         self.quantity = firstPart + secondPart
                         self.convertibleQuantity = True
@@ -215,6 +228,10 @@ class Ingredient(object):
         # if there's a hanging "bulk" in there, it's pretty likely to be implied by this point...
         if workingStatement.find("bulk") == 0:
             workingStatement = workingStatement[4:].strip()
+
+        # if there's a hanging of in there, scrap it
+        if workingStatement.find("of") == 0:
+            workingStatement = workingStatement[2:].strip()
 
         # GET THE BASE TYPE
         # ask the guru for help, so we"re not constantly loading external data per ingredient

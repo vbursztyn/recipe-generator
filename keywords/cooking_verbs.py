@@ -1,7 +1,7 @@
 # Possible conflicts; let's leave these out for now and parse via context clues later
 #cooking_verbs = ['try', 'taste', 'sugar', 'spice', 'skim', 'salt', 'batter', 'spoon']
 
-COOKING_VERBS = {
+COOKING_VERBS = [
 'add',
 'adjust',
 'arrange',
@@ -9,6 +9,7 @@ COOKING_VERBS = {
 'baste',
 'beat',
 'blend',
+'bring to a boil',
 'boil',
 'braise',
 'break',
@@ -111,4 +112,4 @@ COOKING_VERBS = {
 'whip',
 'whisk',
 'wipe',
-}
+]

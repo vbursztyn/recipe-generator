@@ -1,6 +1,7 @@
 import nltk
 from keywords.cooking_verbs import COOKING_VERBS
 from keywords.units import UNITS
+from keywords.tools import COOKING_TOOLS
 import copy
 import re
 
@@ -14,7 +15,7 @@ def intervals_overlap(interval1, interval2):
     return interval1[0] < interval2[1]
 
 def unitnumstr2float(unitnumstr):
-    pieces = unitnumstr.partition(' ')
+    pieces = unitnumstr.split(' ')
     total = 0
     for piece in pieces:
         if re.match(r'^\d+([.]\d+)?$', piece):
@@ -140,6 +141,13 @@ class RecipeStep:
             if ingr1['ingredient'].statement in ingr_subs:
                 self._sub_ingredient(ingr1, ingr_subs[ingr1['ingredient'].statement])
 
+    def get_needed_tools(self):
+        tools = []
+        for plac in self.placeholders.keys():
+            if re.match(r'^__cooktool_\d+__$', plac):
+                tools.append(expand_str_placeholders(str(self.placeholders[plac]), self.placeholders))
+        return tools
+
 
 class RecipeDirectionsParser:
     def __init__(self, raw_directions, ingredients):
@@ -147,14 +155,17 @@ class RecipeDirectionsParser:
         self.ingredients = ingredients
         self.steps = []
 
+        self._HEATLEVEL_REGEX = r'\b(over|on) (low|medium|high) heat'
         self._COOKING_VERB_REGEX = r'\b(' + r'|'.join([re.escape(verb) for verb in COOKING_VERBS]) + r')\b'
         self._UNIT_NUMBER_REGEX = r'\b((\d+ )?\d+([/.]\d+)?)\b'
         self._UNIT_NAME_REGEX = r'\b(' + r'|'.join([re.escape(unit) for unit in UNITS]) + r')\b'
         self._UNIT_REGEX = r'\b__unitnumber_\d+__ ' + self._UNIT_NAME_REGEX
         self._TEMPERATURE_REGEX = r'\b__unitnumber_\d+__ degrees [fc]\b'
-        self._TIME_REGEX = r'\b__unitnumber_\d+__ (minutes?|hours?)\b'
-        self._UNTIL_REGEX = r'\buntil \w+( \w+)* [,.]'
+        self._TIME_REGEX = r'\b(__unitnumber_\d+__ to )?__unitnumber_\d+__ (minutes?|hours?)\b'
         self._FOR_TIME_REGEX = r'\bfor (\w+ )?__time_\d+__'
+        self._UNTIL_REGEX = r'\buntil \w+( \w+)* [,.]'
+        self._COOKING_TOOL_REGEX = r'\b(' + r'|'.join([re.escape(tool) for tool in COOKING_TOOLS]) + r')\b'
+        self._COOKING_TOOL_INTEXT_REGEX = r'(with|using|in) an? (?P<to_sub>((small|medium|large) )?' + self._COOKING_TOOL_REGEX + r')'
 
         self.raw_steps = self._split_steps(raw_directions)
         for step in self.raw_steps:
@@ -164,6 +175,10 @@ class RecipeDirectionsParser:
         return self.steps
 
     def _disambiguate_overlapping_ingredients(self, step, direction_tokens, ingr_extras):
+        # When a word could correspond to any of multiple ingredients,
+        # disambiguate by checking the length of the match and whether the
+        # amount is specified inline
+
         # TODO: Nesting is not deep enough here. Needs more levels of indentation
         for i, ingr1 in enumerate(ingr_extras):
             for j, ingr2 in enumerate(ingr_extras[(i+1):]):
@@ -177,9 +192,11 @@ class RecipeDirectionsParser:
                             elif intervalsize2 < intervalsize1:
                                 ingr2['positions'].remove(interval2)
                             elif 0 < interval1[0] and re.match(r'^__unit_\d+__$', direction_tokens[interval1[0]-1]):
-                                # TODO: In theory we should check the unit in
+                                # In theory we should check the unit in
                                 # addition to the value (e.g., cups are bigger
-                                # than tablespoons).
+                                # than tablespoons). In practice, using just
+                                # the number seems to work pretty well and is
+                                # much easier to implement
                                 expanded_plac = str(step.placeholders[direction_tokens[interval1[0]-1]])
                                 number_str = re.search(r'^__unitnumber_\d+__\b', expanded_plac)
                                 if number_str:
@@ -199,11 +216,14 @@ class RecipeDirectionsParser:
         new_str = ''
         last_ind = 0
         for match in re.finditer(sub_regex, step._processed_text):
-            new_str += step._processed_text[last_ind:match.start()]
+            start, end = match.start(), match.end()
+            if 'to_sub' in match.groupdict():
+                start, end = match.start('to_sub'), match.end('to_sub')
+            new_str += step._processed_text[last_ind:start]
             newplac = step.new_placeholder_id(base_name=base_name)
-            step.placeholders[newplac] = Placeholder(step._processed_text[match.start():match.end()])
+            step.placeholders[newplac] = Placeholder(step._processed_text[start:end])
             new_str += newplac
-            last_ind = match.end()
+            last_ind = end
         new_str += step._processed_text[last_ind:]
         step._processed_text = new_str
 
@@ -212,6 +232,8 @@ class RecipeDirectionsParser:
         ingr_extras = []
         for ingr in self.ingredients:
             namelist = nltk.word_tokenize(ingr.name.lower())
+            if 'and' in namelist:
+                namelist.remove('and')
             ingr_extras.append({
                 'ingredient': ingr,
                 'placeholder': step.new_placeholder_id(base_name='ingredient'),
@@ -270,19 +292,19 @@ class RecipeDirectionsParser:
         step.raw_tokens = nltk.word_tokenize(direction.lower())
 
         step._processed_text = ' '.join(step.raw_tokens)
+        self._strsub_regex2placeholders(step, self._HEATLEVEL_REGEX, base_name='heatlevel')
         self._strsub_regex2placeholders(step, self._COOKING_VERB_REGEX, base_name='cookverb')
         self._strsub_regex2placeholders(step, self._UNIT_NUMBER_REGEX, base_name='unitnumber')
         self._strsub_regex2placeholders(step, self._UNIT_REGEX, base_name='unit')
         self._strsub_regex2placeholders(step, self._TEMPERATURE_REGEX, base_name='temperature')
         self._strsub_regex2placeholders(step, self._TIME_REGEX, base_name='time')
-        self._strsub_regex2placeholders(step, self._UNTIL_REGEX, base_name='until')
         self._strsub_regex2placeholders(step, self._FOR_TIME_REGEX, base_name='fortime')
         self._parse_step_ingredients(step)
+        self._strsub_regex2placeholders(step, self._UNTIL_REGEX, base_name='until')
+        self._strsub_regex2placeholders(step, self._COOKING_TOOL_INTEXT_REGEX, base_name='cooktool')
         return step
 
     def _split_steps(self, directions):
-        # TODO: Eventually need to handle splitting compound sentences like "Chop
-        # celery and mix with lettuce."
         if isinstance(directions, list):
             all_steps = []
             for substep in directions:
