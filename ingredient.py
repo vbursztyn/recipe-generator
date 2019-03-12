@@ -1,6 +1,9 @@
 from copy import copy, deepcopy
 import re
 
+import math
+from fractions import Fraction
+
 from guru import Guru
 from keywords.units import UNITS
 from keywords.prep import PREPSTEPS
@@ -50,7 +53,16 @@ class Ingredient(object):
     def __str__(self):
         # SORTA NLG IT UP!
         output = ""
-        if self.quantity: output += str(self.quantity)
+        if self.quantity:
+            if type(self.quantity) == float:
+                decimals, natural = math.modf(self.quantity)
+                if natural: # if not zero
+                    output += str(natural) + " "
+                fraction = Fraction(decimals).limit_denominator(10)
+                output += "%d/%d" %(fraction.numerator, fraction.denominator)
+                # output += "%.2f" %(self.quantity) # Alternative simplified version
+            else:
+                output += str(self.quantity)
         if self.unit: output += " " + self.unit
         if self.sizeModifier: output += " " + self.sizeModifier
         if self.flavorModifier: output += " " + self.flavorModifier
