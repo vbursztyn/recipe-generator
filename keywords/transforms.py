@@ -420,9 +420,9 @@ TRANSFORMS["meatToVeg"] = {
 }
 
 TRANSFORMS["vegToMeat"] = {
-    "tofu": ["chicken"],
-    "tempeh": ["beef"],
-    "seitan": ["pork"],
+    "tofu": ["chicken","beef","pork"],
+    "tempeh": ["chicken","beef","pork"],
+    "seitan": ["chicken","beef","pork"],
     "vegetable bouillon": ["chicken bouillon"],
     "vegetable broth": ["chicken broth"],
     "vegetable stock": ["chicken stock"],

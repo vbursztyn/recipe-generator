@@ -179,9 +179,14 @@ class Guru(object):
         addedIngs = []
         replacedIngs = [] # for dev bookkeeping
         replaceCount = 0
-        for ing in allIngredients:
+        # temp hack for some testing
+        # ni = deepcopy(allIngredients[5])
+        # allIngredients.append(ni)
+        # end hack
+        for i,ing in enumerate(allIngredients):
             # get the hardcoded cases first, if possible
-            swappedIng = self.ingredientTransformer(ing, type)
+            rollingIngs = [ing for ing in newIngList+allIngredients[i:]]
+            swappedIng = self.ingredientTransformer(ing, type, rollingIngs)
             reason = None
             # special cases for Victor's methods
             # call these second for anything we don't have hard-coded cases for
@@ -211,13 +216,17 @@ class Guru(object):
         if replaceCount == 0:
             # we didn't replace anything in the recipe
             # special cases!
-            # if replaceCount == 0 and type is vegToMeat, add meat to addedIngs
+            # if replaceCount == 0 and type is vegToMeat and there's no meat already, add meat to addedIngs
             # TODO
             # REMEMBER TO USE: changeLog.append("Added "+str(ing.name))
 
-            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices to addedIngs
+            # if replaceCount == 0 and type in ["italian", "indian", "mexican"], add some relevant spices IF THEY'RE NOT ALREADY IN THERE to addedIngs
             # TODO
             pass
+
+        for ai in addedIngs:
+            # flag the things that are being added as such
+            ai.addedByTransform = True
 
         if type in ["toHealthy", "toUnhealthy"]:
             # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
@@ -228,16 +237,14 @@ class Guru(object):
             for i, ing in enumerate(newIngList):
                 if ing.name in TRANSFORMS["unhealthyIngredients"] or ing.baseType in TRANSFORMS["unhealthyBaseTypes"]:
                     newIngList[i] = ing * modifier
+                    newIngList[i].altered = True
                     changeLog.append(modifierKeyword+" the "+str(ing.name))
-        for ai in addedIngs:
-            # flag the things that are being added as such
-            ai.addedByTransform = True
 
         outputIngs = newIngList + addedIngs
 
         return outputIngs, changeLog
 
-    def ingredientTransformer(self, ingredient, type):
+    def ingredientTransformer(self, ingredient, type, currentIngs):
         # NOTE: CURRENTLY RETURNS A STRING NAME OF INGREDIENT TO MATCH SIGNATURE METHOD OF OTHER TRANSFORMERS
         # type is one of meatToVeg, vegToMeat, toHealthy, toUnhealthy -- as defined in keywords/transforms.py
         # iterates over the ingredient maps below and returns a swapout
@@ -245,9 +252,12 @@ class Guru(object):
         # incredibly flatfooted for now -- we can build this out as we see fit
         # also, feel free to make this a class if we need to manage more state
 
-        # we could also use the fuzzy matching here, too
+        # make sure we've got what we need
         if type not in TRANSFORMS:
             return None
+
+        # get some blockers to avoid dupes
+        blockers = [ing.name for ing in currentIngs]
 
         # if ingredient.name in TRANSFORMS[type].keys()
         # first check if there's a fitting key in the database
@@ -255,9 +265,13 @@ class Guru(object):
         if fitting_keys != []:
             keys_length = [len(k.split()) for k in fitting_keys]
             key = fitting_keys[keys_length.index(max(keys_length))]
-            optionCount = len(TRANSFORMS[type][key])
-            optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
-            return TRANSFORMS[type][key][optSelection]
+            # optionCount = len(TRANSFORMS[type][key])
+            # optSelection = randint(0,optionCount-1) if optionCount > 1 else 0
+            # NO LONGER RANDOM -- NOW ITERATES THROUGH LIST UNTIL IT HITS A NON-BLOCKED OPTION
+            for option in TRANSFORMS[type][key]:
+                matches = [match for match in blockers if match in option or option in match]
+                if not matches:
+                    return option
 
         # else if this is meatToVeg, check if this thing is a meat type -- use the "generic" transform
         if type == "meatToVeg" and ingredient.baseType == "meat":

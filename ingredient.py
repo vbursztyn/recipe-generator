@@ -44,6 +44,7 @@ class Ingredient(object):
         output += "\nUNIT: " + str(self.unit)
         output += "\nPREP STEPS: " + str(self.prepSteps)
         output += "\nROLE: " + str(self.role)
+        output += "\n"
         return output
 
     def __str__(self):
