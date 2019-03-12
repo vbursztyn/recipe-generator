@@ -12,6 +12,7 @@ from keywords.transforms import TRANSFORMS
 from ingredient import Ingredient
 from nutritional_transformation import NutritionalTransformation
 import RecipeStep
+import gnureadline
 
 # NOTE: A few of the raw list ingredient data sources imported below contain elements
 # sourced from one of either https://github.com/rkm660/Group10Recipe/blob/master/foods.txt
@@ -237,18 +238,21 @@ class Guru(object):
             changeLog.append("Added some homemade bacon crumbles")
 
         if replaceCount == 0 and type in self.knownCuisines:
-            # breakpoint()
-            # TODO: finish this
             spices = self.strongSpices[type]
-            ingNames = [ing.name for ing in newIngList if ing.baseType in ["spice","herb"]]
+            presentSpices = [ing.name for ing in newIngList if ing.baseType in ["spice","herb"]]
             matched = False
-            for name in ingNames:
+            for name in presentSpices:
                 for spice in spices:
                     if name in spice or spice in name:
                         matched = True
-            if not matched:
-                # add the spice
-                pass
+            if not matched and presentSpices:
+                addedSpices = []
+                for spice in spices:
+                    addedSpices.append(Ingredient("1 teaspoon of "+spice, self))
+
+                # addedSpices is now a list of spices to add
+                # presentSpices[0] is the name (string) of a spice in the existing steps
+                # TODO: RecipeStep.add_ingredents_alongside(steps, reference_ingr, addedSpices)
 
         if type in ["toHealthy", "toUnhealthy"]:
             # if type is toHealthy, 1/2 unhealthy ingredients/baseTypes
