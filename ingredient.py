@@ -1,8 +1,7 @@
 from copy import copy, deepcopy
 import re
-
-import fractions
 import math
+import fractions
 from fractions import Fraction
 
 from keywords.units import UNITS
@@ -49,8 +48,11 @@ class Ingredient(object):
         return output
 
     def __repr__(self):
+        return self.verboseRep()
+
+    def verboseRep(self):
         output = "-----"
-        output += "\nSTATEMENT: " + self.statement
+        output += "\nORIGINAL STATEMENT (if updated, no longer reflects current state): " + self.statement
         output += "\nNAME: " + str(self.name)
         output += "\nBASETYPE: " + str(self.baseType)
         output += "\nQUANTITY: " + str(self.quantity)
