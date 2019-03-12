@@ -76,5 +76,6 @@ In the case of "to vegetarian/non-vegetarian" the lists were written by hand and
 
 The following datasets were partially included or consulted in the course of this project:
 
-[1] USDA - Food Composition Database at https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip (used in "2. Make it healthier" and "3. Make it less healthy")
-[2] FooDB - Food Component Database at http://foodb.ca/ (used as seed for our manually enriched lists, which in turn are used in all transformations)
+1. USDA - Food Composition Database at https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip (used in "2. Make it healthier" and "3. Make it less healthy")
+
+2. FooDB - Food Component Database at http://foodb.ca/ (used as seed for our manually enriched lists, which in turn are used in all transformations)
