@@ -1,8 +1,7 @@
 from copy import copy, deepcopy
 import re
-
-import fractions
 import math
+import fractions
 from fractions import Fraction
 
 from keywords.units import UNITS
