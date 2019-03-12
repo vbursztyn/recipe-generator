@@ -100,10 +100,10 @@ def modify_steps(steps, ingr_subs):
     for step in steps:
         step.sub_ingredients(ingr_subs)
 
-def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
+def add_ingredents_alongside(steps, reference_ingr_stmt, new_ingrs):
     i = 0
     while i < len(steps):
-        if any(ingr['placeholder'] in steps[i]._processed_text and ingr['ingredient'].statement == reference_ingr.statement for ingr in steps[i].ingredients):
+        if any(ingr['placeholder'] in steps[i]._processed_text and ingr['ingredient'].statement == reference_ingr_stmt for ingr in steps[i].ingredients):
             new_step = RecipeStep()
             action_placid = new_step.new_placeholder_id(base_name='cookverb')
             new_step.placeholders[action_placid] = Placeholder('add')
@@ -125,6 +125,12 @@ def add_ingredents_alongside(steps, reference_ingr, new_ingrs):
             steps.insert(i+1, new_step)
             i += 1
         i += 1
+
+def find_serve_stepnum(steps):
+    for i, step in enumerate(steps):
+        if 'serve' in step.get_actions():
+            return i
+    return None
 
 
 class Placeholder:
