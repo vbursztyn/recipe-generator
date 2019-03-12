@@ -79,12 +79,14 @@ class Ingredient(object):
         if prepSteps and len(prepSteps) == 1:
             output += ", " + prepSteps[0]
         elif prepSteps and len(prepSteps) > 1:
+            output += ","
             for i, step in enumerate(prepSteps):
                 if (i + 1) == len(prepSteps):
-                    output += " and "
+                    output += " and"
                 output += " " + step
         if self.quantityModifier:
             output += " (" + self.quantityModifier + ")"
+        output = output.strip()
         return output
 
     def __mul__(self, x):
@@ -235,6 +237,10 @@ class Ingredient(object):
         # if there's a hanging of in there, scrap it
         if workingStatement.find("of") == 0:
             workingStatement = workingStatement[2:].strip()
+
+        # gutcheck
+        if workingStatement[-4:] == " and":
+            workingStatement = workingStatement[0:-4].strip()
 
         # GET THE BASE TYPE
         # ask the guru for help, so we"re not constantly loading external data per ingredient
