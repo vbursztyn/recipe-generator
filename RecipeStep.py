@@ -15,7 +15,7 @@ def intervals_overlap(interval1, interval2):
     return interval1[0] < interval2[1]
 
 def unitnumstr2float(unitnumstr):
-    pieces = unitnumstr.partition(' ')
+    pieces = unitnumstr.split(' ')
     total = 0
     for piece in pieces:
         if re.match(r'^\d+([.]\d+)?$', piece):
@@ -161,7 +161,7 @@ class RecipeDirectionsParser:
         self._UNIT_NAME_REGEX = r'\b(' + r'|'.join([re.escape(unit) for unit in UNITS]) + r')\b'
         self._UNIT_REGEX = r'\b__unitnumber_\d+__ ' + self._UNIT_NAME_REGEX
         self._TEMPERATURE_REGEX = r'\b__unitnumber_\d+__ degrees [fc]\b'
-        self._TIME_REGEX = r'\b__unitnumber_\d+__ (minutes?|hours?)\b'
+        self._TIME_REGEX = r'\b(__unitnumber_\d+__ to )?__unitnumber_\d+__ (minutes?|hours?)\b'
         self._FOR_TIME_REGEX = r'\bfor (\w+ )?__time_\d+__'
         self._UNTIL_REGEX = r'\buntil \w+( \w+)* [,.]'
         self._COOKING_TOOL_REGEX = r'\b(' + r'|'.join([re.escape(tool) for tool in COOKING_TOOLS]) + r')\b'
@@ -175,6 +175,10 @@ class RecipeDirectionsParser:
         return self.steps
 
     def _disambiguate_overlapping_ingredients(self, step, direction_tokens, ingr_extras):
+        # When a word could correspond to any of multiple ingredients,
+        # disambiguate by checking the length of the match and whether the
+        # amount is specified inline
+
         # TODO: Nesting is not deep enough here. Needs more levels of indentation
         for i, ingr1 in enumerate(ingr_extras):
             for j, ingr2 in enumerate(ingr_extras[(i+1):]):
@@ -188,9 +192,11 @@ class RecipeDirectionsParser:
                             elif intervalsize2 < intervalsize1:
                                 ingr2['positions'].remove(interval2)
                             elif 0 < interval1[0] and re.match(r'^__unit_\d+__$', direction_tokens[interval1[0]-1]):
-                                # TODO: In theory we should check the unit in
+                                # In theory we should check the unit in
                                 # addition to the value (e.g., cups are bigger
-                                # than tablespoons).
+                                # than tablespoons). In practice, using just
+                                # the number seems to work pretty well and is
+                                # much easier to implement
                                 expanded_plac = str(step.placeholders[direction_tokens[interval1[0]-1]])
                                 number_str = re.search(r'^__unitnumber_\d+__\b', expanded_plac)
                                 if number_str:
@@ -299,8 +305,6 @@ class RecipeDirectionsParser:
         return step
 
     def _split_steps(self, directions):
-        # TODO: Eventually need to handle splitting compound sentences like "Chop
-        # celery and mix with lettuce."
         if isinstance(directions, list):
             all_steps = []
             for substep in directions:
