@@ -161,7 +161,7 @@ class RecipeDirectionsParser:
         self._UNIT_NAME_REGEX = r'\b(' + r'|'.join([re.escape(unit) for unit in UNITS]) + r')\b'
         self._UNIT_REGEX = r'\b__unitnumber_\d+__ ' + self._UNIT_NAME_REGEX
         self._TEMPERATURE_REGEX = r'\b__unitnumber_\d+__ degrees [fc]\b'
-        self._TIME_REGEX = r'\b__unitnumber_\d+__ (minutes?|hours?)\b'
+        self._TIME_REGEX = r'\b(__unitnumber_\d+__ to )?__unitnumber_\d+__ (minutes?|hours?)\b'
         self._FOR_TIME_REGEX = r'\bfor (\w+ )?__time_\d+__'
         self._UNTIL_REGEX = r'\buntil \w+( \w+)* [,.]'
         self._COOKING_TOOL_REGEX = r'\b(' + r'|'.join([re.escape(tool) for tool in COOKING_TOOLS]) + r')\b'
