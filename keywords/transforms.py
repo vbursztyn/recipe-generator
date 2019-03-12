@@ -159,7 +159,7 @@ TRANSFORMS['mexican'] = {
  'star anise': ['taco seasoning', 'chili powder', 'cumin'],
  'bean sprouts': ['chili beans', 'black olives', 'kernel corn'],
  'mustard': ['enchilada sauce'],
- 'vanilla extract': ['taco seasoning', 'chili powder', 'cumin'],
+ 'vanilla extract': ['agave'],
  'feta cheese': ['monterey jack cheese','cheddar cheese'],
  'pancetta': ['flank steak'],
  'hoisin sauce': ['enchilada sauce'],
